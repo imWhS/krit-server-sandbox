@@ -2,10 +2,8 @@ package imwhs.krit_server_sandbox.domain;
 
 import jakarta.persistence.*;
 
-import java.time.LocalDateTime;
-
 @Entity
-public class Account {
+public class Account extends BaseTimeEntity {
 
     /**
      * 식별자 및 데이터베이스 기본 키(PK)
@@ -60,11 +58,5 @@ public class Account {
      * </ul>
      */
     private String imageUrl;
-
-    private LocalDateTime createdAt;
-
-    private LocalDateTime updatedAt;
-
-    private LocalDateTime deletedAt;
 
 }
