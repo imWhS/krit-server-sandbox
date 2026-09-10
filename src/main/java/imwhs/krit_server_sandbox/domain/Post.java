@@ -6,7 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 
 @Entity
-public class Post extends BaseTimeEntity {
+public class Post extends BaseEntity {
 
     @Id @GeneratedValue
     private Long id;

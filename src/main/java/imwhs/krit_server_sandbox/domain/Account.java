@@ -3,7 +3,7 @@ package imwhs.krit_server_sandbox.domain;
 import jakarta.persistence.*;
 
 @Entity
-public class Account extends BaseTimeEntity {
+public class Account extends BaseEntity {
 
     /**
      * 식별자 및 데이터베이스 기본 키(PK)
