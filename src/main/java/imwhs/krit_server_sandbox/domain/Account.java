@@ -2,6 +2,8 @@ package imwhs.krit_server_sandbox.domain;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 public class Account extends BaseEntity {
 
@@ -58,5 +60,16 @@ public class Account extends BaseEntity {
      * </ul>
      */
     private String imageUrl;
+
+    private LocalDateTime deletedAt;
+
+    private Long deletedBy;
+
+    public void softDelete(Long requesterId) {
+        // 이미 논리적 삭제된 상태여도 멱등하게 처리합니다.
+        if (deletedAt != null || deletedBy != null) { return; }
+        deletedAt = LocalDateTime.now();
+        deletedBy = requesterId;
+    }
 
 }

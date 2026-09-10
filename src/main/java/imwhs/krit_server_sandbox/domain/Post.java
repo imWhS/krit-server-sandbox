@@ -5,6 +5,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 
+import java.time.LocalDateTime;
+
 @Entity
 public class Post extends BaseEntity {
 
@@ -25,5 +27,16 @@ public class Post extends BaseEntity {
      */
     @Column(columnDefinition = "TEXT")
     private String content;
+
+    private LocalDateTime deletedAt;
+
+    private Long deletedBy;
+
+    public void softDelete(Long requesterId) {
+        // 이미 논리적 삭제된 상태여도 멱등하게 처리합니다.
+        if (deletedAt != null || deletedBy != null) { return; }
+        deletedAt = LocalDateTime.now();
+        deletedBy = requesterId;
+    }
 
 }
