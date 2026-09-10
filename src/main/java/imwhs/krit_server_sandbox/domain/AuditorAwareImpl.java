@@ -10,7 +10,7 @@ public class AuditorAwareImpl implements AuditorAware<String> {
 
     @Override
     public Optional<String> getCurrentAuditor() {
-        return Optional.of("admin");
+        return Optional.of("admin"); // TODO: Spring Security 인증 구현 후 SecurityContextHolder 통해 세션의 사용자 정보로 설정
     }
 
 }
