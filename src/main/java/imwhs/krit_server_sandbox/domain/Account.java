@@ -1,9 +1,14 @@
 package imwhs.krit_server_sandbox.domain;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class Account extends BaseEntity {
 
@@ -36,6 +41,12 @@ public class Account extends BaseEntity {
     private String email;
 
     /**
+     * 암호화된 암호
+     */
+    @Column(nullable = false)
+    private String password;
+
+    /**
      * 이름
      *
      * <ul>
@@ -45,12 +56,6 @@ public class Account extends BaseEntity {
      */
     @Column(length = 40)
     private String name;
-
-    /**
-     * 암호화된 암호
-     */
-    @Column(nullable = false)
-    private String password;
 
     /**
      * 이미지 URL
@@ -65,15 +70,59 @@ public class Account extends BaseEntity {
 
     private Long deletedBy;
 
+    private Account(String handle, String email, String password) {
+        this.handle = handle;
+        this.email = email;
+        this.password = password;
+    }
+
+    public Account updateName(String name) {
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("업데이트하려는 name이 유효하지 않아요.");
+        }
+        this.name = name;
+        return this;
+    }
+
+    public Account removeName() {
+        this.name = null;
+        return this;
+    }
+
+    public Account updateImageUrl(String imageUrl) {
+        if (imageUrl == null || imageUrl.isBlank()) {
+            throw new IllegalArgumentException("업데이트하려는 imageUrl이 유효하지 않아요.");
+        }
+        this.imageUrl = imageUrl;
+        return this;
+    }
+
+    public Account removeImageUrl() {
+        this.imageUrl = null;
+        return this;
+    }
+
+    /**
+     * 논리적 삭제 여부를 나타냅니다.
+     * @return 논리적 삭제 여부
+     */
+    public boolean isDeleted() {
+        return deletedAt != null;
+    }
+
     /**
      * 논리적으로 삭제합니다.
-     * @param requesterId 삭제를 요청한 계정의 ID
+     * @param deletedBy 삭제를 요청한 계정의 ID
      */
-    public void softDelete(Long requesterId) {
+    public void softDelete(Long deletedBy) {
         // 이미 논리적 삭제된 상태여도 멱등하게 처리합니다.
-        if (deletedAt != null || deletedBy != null) { return; }
+        if (isDeleted()) { return; }
         deletedAt = LocalDateTime.now();
-        deletedBy = requesterId;
+        this.deletedBy = deletedBy;
+    }
+
+    public static Account create(String handle, String email, String password) {
+        return new Account(handle, email, password);
     }
 
 }
