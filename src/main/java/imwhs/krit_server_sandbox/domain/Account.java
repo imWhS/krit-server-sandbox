@@ -6,11 +6,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.regex.Pattern;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class Account extends BaseEntity {
+
+    private static final Pattern HANDLE_PATTERN = Pattern.compile("^[a-z0-9_.]{6,20}$");
 
     /**
      * 식별자 및 데이터베이스 기본 키(PK)
@@ -19,12 +22,12 @@ public class Account extends BaseEntity {
     private Long id;
 
     /**
-     * 공개 식별자
+     * 공개 식별자(핸들)
      *
      * <ul>
      *     <li> 서비스 내에서 공개적으로 사용자를 식별할 수 있는 문자열입니다. </li>
      *     <li> 다른 계정과 중복될 수 없습니다. </li>
-     *     <li> 최소 6자부터 최대 20자 이하 길이의 영어 알파벳 소문자, 밑줄(_), 마침표(.)만 사용할 수 있습니다.  </li>
+     *     <li> 최소 6자부터 최대 20자 이하 길이의 영어 알파벳 소문자, 숫자, 밑줄(_), 마침표(.)만 사용할 수 있습니다.  </li>
      * </ul>
      */
     @Column(length = 20, unique = true, nullable = false)
@@ -59,7 +62,7 @@ public class Account extends BaseEntity {
 
     /**
      * 이미지 URL
-
+     *
      * <ul>
      *     <li> 사용자 생성 콘텐츠 등에서 작성자 프로필을 표시할 때 사용합니다. </li>
      * </ul>
@@ -77,9 +80,7 @@ public class Account extends BaseEntity {
     }
 
     public Account updateName(String name) {
-        if (name == null || name.isBlank()) {
-            throw new IllegalArgumentException("업데이트하려는 name이 유효하지 않아요.");
-        }
+        validateName(name);
         this.name = name;
         return this;
     }
@@ -90,9 +91,7 @@ public class Account extends BaseEntity {
     }
 
     public Account updateImageUrl(String imageUrl) {
-        if (imageUrl == null || imageUrl.isBlank()) {
-            throw new IllegalArgumentException("업데이트하려는 imageUrl이 유효하지 않아요.");
-        }
+        validateImageUrl(imageUrl);
         this.imageUrl = imageUrl;
         return this;
     }
@@ -121,8 +120,49 @@ public class Account extends BaseEntity {
         this.deletedBy = deletedBy;
     }
 
-    public static Account create(String handle, String email, String password) {
-        return new Account(handle, email, password);
+    public static Account create(String handle, String email, String encodedPassword) {
+        validateHandle(handle);
+        validateEmail(email);
+        validateEncodedPassword(encodedPassword);
+        return new Account(handle, email, encodedPassword);
+    }
+
+    private static void validateHandle(String handle) {
+        if (handle == null || handle.isBlank()) {
+            throw new IllegalArgumentException("계정의 공개 식별자(핸들)가 유효하지 않아요.");
+        }
+
+        if (!HANDLE_PATTERN.matcher(handle).matches()) {
+            throw new IllegalArgumentException("계정의 공개 식별자(핸들)는 최소 6자부터 최대 20자 이하 길이의 영어 알파벳 소문자, 숫자, 밑줄(_), 마침표(.)만 사용할 수 있어요.");
+        }
+    }
+
+    private static void validateEmail(String email) {
+        if (email == null || email.isBlank()) {
+            throw new IllegalArgumentException("계정의 이메일 주소가 유효하지 않아요.");
+        }
+    }
+
+    private static void validateEncodedPassword(String encodedPassword) {
+        if (encodedPassword == null || encodedPassword.isBlank()) {
+            throw new IllegalArgumentException("계정의 암호가 유효하지 않아요.");
+        }
+    }
+
+    private static void validateName(String name) {
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("계정의 이름이 유효하지 않아요.");
+        }
+
+        if (name.length() < 2 || 40 < name.length()) {
+            throw new IllegalArgumentException("계정의 이름은 최소 2자부터 최대 40자 이하 길이의 문자열만 사용할 수 있어요.");
+        }
+    }
+
+    private static void validateImageUrl(String imageUrl) {
+        if (imageUrl == null || imageUrl.isBlank()) {
+            throw new IllegalArgumentException("계정의 이미지 URL이 유효하지 않아요.");
+        }
     }
 
 }
