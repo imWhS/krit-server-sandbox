@@ -111,13 +111,13 @@ public class Account extends BaseEntity {
 
     /**
      * 논리적으로 삭제합니다.
-     * @param deletedBy 삭제를 요청한 계정의 ID
+     * @param actorId 삭제를 요청한 계정의 ID
      */
-    public void softDelete(Long deletedBy) {
+    public void softDelete(Long actorId) {
         // 이미 논리적 삭제된 상태여도 멱등하게 처리합니다.
         if (isDeleted()) { return; }
         deletedAt = LocalDateTime.now();
-        this.deletedBy = deletedBy;
+        this.deletedBy = actorId;
     }
 
     public static Account create(String handle, String email, String encodedPassword) {
