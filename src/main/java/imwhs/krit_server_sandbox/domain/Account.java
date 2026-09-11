@@ -41,10 +41,10 @@ public class Account extends BaseEntity {
     private String email;
 
     /**
-     * 암호화된 암호
+     * 해싱된 암호
      */
     @Column(nullable = false)
-    private String password;
+    private String encodedPassword;
 
     /**
      * 이름
@@ -70,10 +70,10 @@ public class Account extends BaseEntity {
 
     private Long deletedBy;
 
-    private Account(String handle, String email, String password) {
+    private Account(String handle, String email, String encodedPassword) {
         this.handle = handle;
         this.email = email;
-        this.password = password;
+        this.encodedPassword = encodedPassword;
     }
 
     public Account updateName(String name) {
