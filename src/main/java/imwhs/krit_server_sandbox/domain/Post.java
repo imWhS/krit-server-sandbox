@@ -19,8 +19,11 @@ public class Post extends BaseEntity {
 
     /**
      * 제목
+     * <ul>
+     *     <li> 최대 100자 이하 길이의 문자열을 사용할 수 있습니다. </li>
+     * </ul>
      */
-    @Column(length = 100, nullable = false)
+    @Column(length = 100)
     private String title;
 
     /**
@@ -29,7 +32,7 @@ public class Post extends BaseEntity {
      *     <li> 대용량 텍스트를 저장하기 위해 VARCHAR 대신 TEXT 타입을 사용합니다. </li>
      * </ul>
      */
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
     private LocalDateTime deletedAt;
