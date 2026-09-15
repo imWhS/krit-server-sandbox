@@ -50,4 +50,26 @@ public class Post extends BaseEntity {
         deletedBy = requesterId;
     }
 
+    public static Post create(Account author, String title, String content) {
+        validateAuthor(author);
+        validateTitle(title);
+        Post post = new Post();
+        post.author = author;
+        post.title = title;
+        post.content = content;
+        return post;
+    }
+
+    private static void validateAuthor(Account author) {
+        if (author == null) {
+            throw new IllegalStateException("게시물의 작성자가 유효하지 않아요.");
+        }
+    }
+
+    private static void validateTitle(String title) {
+        if (title != null && 100 < title.length()) {
+            throw new IllegalArgumentException("게시물의 제목은 최대 100자 이하 길이의 문자열만 사용할 수 있어요.");
+        }
+    }
+
 }
