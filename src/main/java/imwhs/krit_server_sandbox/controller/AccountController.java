@@ -3,6 +3,7 @@ package imwhs.krit_server_sandbox.controller;
 import imwhs.krit_server_sandbox.domain.Account;
 import imwhs.krit_server_sandbox.dto.*;
 import imwhs.krit_server_sandbox.service.AccountService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +17,7 @@ public class AccountController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public AccountResponse registerAccount(@RequestBody AccountRegisterRequest request) {
+    public AccountResponse registerAccount(@Valid @RequestBody AccountRegisterRequest request) {
         Account account = accountService.register(request.getHandle(), request.getEmail(), request.getPassword());
         return AccountResponse.from(account);
     }
@@ -37,7 +38,7 @@ public class AccountController {
     @PutMapping("/{id}/password") // TODO: PATCH?
     public void updateAccountPassword(
             @PathVariable Long id,
-            @RequestBody AccountPasswordUpdateRequest request) {
+            @Valid @RequestBody AccountPasswordUpdateRequest request) {
         accountService.updatePassword(id, request.password());
     }
 
@@ -45,7 +46,7 @@ public class AccountController {
     @PutMapping("/{id}/name") // TODO: PATCH?
     public void updateAccountName(
             @PathVariable Long id,
-            @RequestBody AccountNameUpdateRequest request) {
+            @Valid @RequestBody AccountNameUpdateRequest request) {
         accountService.updateName(id, request.name());
     }
 
@@ -53,7 +54,7 @@ public class AccountController {
     @PutMapping("/{id}/imageUrl") // TODO: PATCH?
     public void updateAccountImageUrl(
             @PathVariable Long id,
-            @RequestBody AccountImageUrlUpdateRequest request) {
+            @Valid @RequestBody AccountImageUrlUpdateRequest request) {
         accountService.updateImageUrl(id, request.imageUrl());
     }
 
