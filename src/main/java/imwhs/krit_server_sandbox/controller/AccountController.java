@@ -20,7 +20,9 @@ public class AccountController {
     @PostMapping
     public AccountResponse registerAccount(@RequestBody AccountRegisterRequest request) {
         Account account = accountService.register(request.getHandle(), request.getEmail(), request.getPassword());
-        return new AccountResponse(account);
+        return AccountResponse.from(account);
     }
+
+
 
 }
