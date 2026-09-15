@@ -18,7 +18,7 @@ public class AccountService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public void register(String handle, String email, String password) {
+    public Account register(String handle, String email, String password) {
         boolean isExistByHandle = accountRepository.existsByHandleAndDeletedAtIsNull(handle);
         if (isExistByHandle) {
             throw new IllegalStateException("이미 " + handle + "을 공개 식별자(핸들)로 사용하고 있는 계정이 있어요.");
@@ -32,6 +32,7 @@ public class AccountService {
         String encodedPassword = passwordEncoder.encode(password);
         Account account = Account.create(handle, email, encodedPassword);
         accountRepository.save(account);
+        return account;
     }
 
     public Account getByHandle(String handle) {
@@ -60,7 +61,7 @@ public class AccountService {
     @Transactional
     public void softDelete(String handle, Long actorId) {
         Account actor = accountRepository.findById(actorId).orElseThrow(() ->
-                new IllegalArgumentException("삭제를 요청한 계정의 ID가 유효하지 않아요."));
+                new IllegalArgumentException("계정 삭제를 요청한 계정의 ID가 유효하지 않아요."));
 
         Account account = getByHandle(handle);
         account.softDelete(actor.getId());
