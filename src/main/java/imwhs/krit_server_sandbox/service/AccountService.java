@@ -35,6 +35,17 @@ public class AccountService {
         return account;
     }
 
+    public Account get(Long id) {
+        if (id == null) {
+            throw new IllegalArgumentException("계정의 ID가 유효하지 않아요.");
+        }
+
+        Account account = accountRepository.findById(id).orElseThrow(() ->
+                new NoSuchElementException("ID가 " + id + "인 계정을 찾을 수 없어요."));
+
+        return account;
+    }
+
     public Account getByHandle(String handle) {
         if (handle == null || handle.isBlank()) {
             throw new IllegalArgumentException("계정의 공개 식별자(핸들)가 유효하지 않아요.");
