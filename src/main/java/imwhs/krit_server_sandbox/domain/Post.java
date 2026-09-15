@@ -50,6 +50,17 @@ public class Post extends BaseEntity {
         deletedBy = requesterId;
     }
 
+    public Post updateTitle(String title) {
+        validateTitle(title);
+        this.title = title;
+        return this;
+    }
+
+    public Post updateContent(String content) {
+        this.content = content;
+        return this;
+    }
+
     public static Post create(Account author, String title, String content) {
         validateAuthor(author);
         validateTitle(title);
