@@ -34,6 +34,13 @@ public class PostService {
     }
 
     @Transactional
+    public void update(Long id, String title, String content) {
+        Post post = get(id);
+        post.updateTitle(title);
+        post.updateContent(content);
+    }
+
+    @Transactional
     public void updateTitle(Long id, String title) {
         Post post = get(id);
         post.updateTitle(title);
