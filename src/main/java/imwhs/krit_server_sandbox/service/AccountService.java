@@ -58,23 +58,23 @@ public class AccountService {
     }
 
     @Transactional
-    public void updateName(String handle, String name) {
-        Account account = getByHandle(handle);
+    public void updateName(Long id, String name) {
+        Account account = get(id);
         account.updateName(name);
     }
 
     @Transactional
-    public void updateImageUrl(String handle, String imageUrl) {
-        Account account = getByHandle(handle);
+    public void updateImageUrl(Long id, String imageUrl) {
+        Account account = get(id);
         account.updateImageUrl(imageUrl);
     }
 
     @Transactional
-    public void softDelete(String handle, Long actorId) {
+    public void softDelete(Long id, Long actorId) {
         Account actor = accountRepository.findById(actorId).orElseThrow(() ->
                 new NoSuchElementException("계정 삭제를 요청한 계정의 ID가 유효하지 않아요."));
 
-        Account account = getByHandle(handle);
+        Account account = get(id);
         account.softDelete(actor.getId());
     }
 
