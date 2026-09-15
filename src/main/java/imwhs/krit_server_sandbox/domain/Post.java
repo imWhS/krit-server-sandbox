@@ -19,8 +19,11 @@ public class Post extends BaseEntity {
 
     /**
      * 제목
+     * <ul>
+     *     <li> 최대 100자 이하 길이의 문자열을 사용할 수 있습니다. </li>
+     * </ul>
      */
-    @Column(length = 100, nullable = false)
+    @Column(length = 100)
     private String title;
 
     /**
@@ -29,7 +32,7 @@ public class Post extends BaseEntity {
      *     <li> 대용량 텍스트를 저장하기 위해 VARCHAR 대신 TEXT 타입을 사용합니다. </li>
      * </ul>
      */
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
     private LocalDateTime deletedAt;
@@ -45,6 +48,39 @@ public class Post extends BaseEntity {
         if (deletedAt != null || deletedBy != null) { return; }
         deletedAt = LocalDateTime.now();
         deletedBy = requesterId;
+    }
+
+    public Post updateTitle(String title) {
+        validateTitle(title);
+        this.title = title;
+        return this;
+    }
+
+    public Post updateContent(String content) {
+        this.content = content;
+        return this;
+    }
+
+    public static Post create(Account author, String title, String content) {
+        validateAuthor(author);
+        validateTitle(title);
+        Post post = new Post();
+        post.author = author;
+        post.title = title;
+        post.content = content;
+        return post;
+    }
+
+    private static void validateAuthor(Account author) {
+        if (author == null) {
+            throw new IllegalStateException("게시물의 작성자가 유효하지 않아요.");
+        }
+    }
+
+    private static void validateTitle(String title) {
+        if (title != null && 100 < title.length()) {
+            throw new IllegalArgumentException("게시물의 제목은 최대 100자 이하 길이의 문자열만 사용할 수 있어요.");
+        }
     }
 
 }
