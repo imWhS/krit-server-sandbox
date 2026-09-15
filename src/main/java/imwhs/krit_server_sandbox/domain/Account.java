@@ -54,7 +54,7 @@ public class Account extends BaseEntity {
      *
      * <ul>
      *     <li> 사용자 생성 콘텐츠 등에서 작성자 프로필을 표시할 때 사용합니다. </li>
-     *     <li> 최소 2자부터 최대 40자 이하 길이의 문자열을 사용할 수 있습니다. </li>
+     *     <li> 최소 1자부터 최대 40자 이하 길이의 문자열을 사용할 수 있습니다. </li>
      * </ul>
      */
     @Column(length = 40)
@@ -154,7 +154,7 @@ public class Account extends BaseEntity {
             throw new IllegalArgumentException("계정의 이름이 유효하지 않아요.");
         }
 
-        if (name.length() < 2 || 40 < name.length()) {
+        if (name.length() < 1 || 40 < name.length()) {
             throw new IllegalArgumentException("계정의 이름은 최소 2자부터 최대 40자 이하 길이의 문자열만 사용할 수 있어요.");
         }
     }
