@@ -40,7 +40,7 @@ public class AccountService {
             throw new IllegalArgumentException("계정의 ID가 유효하지 않아요.");
         }
 
-        Account account = accountRepository.findById(id).orElseThrow(() ->
+        Account account = accountRepository.findByIdAndDeletedAtIsNull(id).orElseThrow(() ->
                 new NoSuchElementException("ID가 " + id + "인 계정을 찾을 수 없어요."));
 
         return account;
