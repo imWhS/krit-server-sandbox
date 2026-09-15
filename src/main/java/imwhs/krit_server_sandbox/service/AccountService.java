@@ -61,7 +61,7 @@ public class AccountService {
     @Transactional
     public void softDelete(String handle, Long actorId) {
         Account actor = accountRepository.findById(actorId).orElseThrow(() ->
-                new IllegalArgumentException("계정 삭제를 요청한 계정의 ID가 유효하지 않아요."));
+                new NoSuchElementException("계정 삭제를 요청한 계정의 ID가 유효하지 않아요."));
 
         Account account = getByHandle(handle);
         account.softDelete(actor.getId());

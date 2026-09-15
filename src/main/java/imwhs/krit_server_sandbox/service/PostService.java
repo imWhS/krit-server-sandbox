@@ -21,7 +21,7 @@ public class PostService {
     @Transactional
     public Post register(Long authorId, String title, String content) {
         Account author = accountRepository.findById(authorId).orElseThrow(() ->
-                new IllegalArgumentException("작성자의 ID가 유효하지 않아요."));
+                new NoSuchElementException("작성자의 ID가 유효하지 않아요."));
         Post post = Post.create(author, title, content);
         postRepository.save(post);
         return post;
@@ -48,7 +48,7 @@ public class PostService {
     @Transactional
     public void softDelete(Long id, Long actorId) {
         Account actor = accountRepository.findById(actorId).orElseThrow(() ->
-                new IllegalArgumentException("게시물 삭제를 요청한 계정의 ID가 유효하지 않아요."));
+                new NoSuchElementException("게시물 삭제를 요청한 계정의 ID가 유효하지 않아요."));
         Post post = get(id);
         post.softDelete(actor.getId());
     }
