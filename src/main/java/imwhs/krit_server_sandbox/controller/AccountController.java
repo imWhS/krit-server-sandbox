@@ -34,7 +34,7 @@ public class AccountController {
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PutMapping("/{id}/password")
+    @PutMapping("/{id}/password") // TODO: PATCH?
     public void updateAccountPassword(
             @PathVariable Long id,
             @RequestBody AccountPasswordUpdateRequest request) {
@@ -42,7 +42,7 @@ public class AccountController {
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PutMapping("/{id}/name")
+    @PutMapping("/{id}/name") // TODO: PATCH?
     public void updateAccountName(
             @PathVariable Long id,
             @RequestBody AccountNameUpdateRequest request) {
@@ -50,7 +50,7 @@ public class AccountController {
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PutMapping("/{id}/imageUrl")
+    @PutMapping("/{id}/imageUrl") // TODO: PATCH?
     public void updateAccountImageUrl(
             @PathVariable Long id,
             @RequestBody AccountImageUrlUpdateRequest request) {

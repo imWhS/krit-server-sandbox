@@ -3,6 +3,7 @@ package imwhs.krit_server_sandbox.controller;
 import imwhs.krit_server_sandbox.domain.Post;
 import imwhs.krit_server_sandbox.dto.PostRegisterRequest;
 import imwhs.krit_server_sandbox.dto.PostResponse;
+import imwhs.krit_server_sandbox.dto.PostUpdateRequest;
 import imwhs.krit_server_sandbox.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,5 +23,10 @@ public class PostController {
         return PostResponse.from(post);
     }
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PutMapping("/{id}")
+    public void update(@PathVariable Long id, @RequestBody PostUpdateRequest request) {
+        postService.update(id, request.title(), request.content());
+    }
 
 }
