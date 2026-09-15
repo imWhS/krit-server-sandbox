@@ -79,6 +79,12 @@ public class Account extends BaseEntity {
         this.encodedPassword = encodedPassword;
     }
 
+    public Account updateEncodedPassword(String encodedPassword) {
+        validateEncodedPassword(encodedPassword);
+        this.encodedPassword = encodedPassword;
+        return this;
+    }
+
     public Account updateName(String name) {
         validateName(name);
         this.name = name;
@@ -145,7 +151,7 @@ public class Account extends BaseEntity {
 
     private static void validateEncodedPassword(String encodedPassword) {
         if (encodedPassword == null || encodedPassword.isBlank()) {
-            throw new IllegalArgumentException("계정의 암호가 유효하지 않아요.");
+            throw new IllegalArgumentException("계정의 해싱된 암호가 유효하지 않아요.");
         }
     }
 

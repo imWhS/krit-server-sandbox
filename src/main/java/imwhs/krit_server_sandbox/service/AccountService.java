@@ -58,6 +58,13 @@ public class AccountService {
     }
 
     @Transactional
+    public void updatePassword(Long id, String password) {
+        Account account = get(id);
+        String encodedPassword = passwordEncoder.encode(password);
+        account.updateEncodedPassword(encodedPassword);
+    }
+
+    @Transactional
     public void updateName(Long id, String name) {
         Account account = get(id);
         account.updateName(name);
