@@ -12,7 +12,7 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 
 /**
- * Spring MVC 및 Service, Repository 계층에서 발생한 예외를 공통으로 처리하기 위한 핸들러 메서드를 정의합니다.
+ * Spring MVC 및 Service, Repository 계층에서 발생한 예외를 공통으로 처리 후 HTTP 응답하기 위한 핸들러 메서드를 정의합니다.
  * 핸들러 메서드는 예외 발생 원인 및 메시지 등을 이용해 상태 코드와 함께 HTTP 응답 객체를 반환합니다.
  */
 @RestControllerAdvice
@@ -28,12 +28,6 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleIllegalArgumentException(IllegalArgumentException e) {
         return new ErrorResponse("INVALID_ARGUMENT", e.getMessage(), LocalDateTime.now());
-    }
-
-    @ExceptionHandler(value = IllegalStateException.class)
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleIllegalStateException(IllegalStateException e) {
-        return new ErrorResponse("INVALID_STATE", e.getMessage(), LocalDateTime.now());
     }
 
     /**

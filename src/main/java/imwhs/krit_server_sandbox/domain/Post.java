@@ -78,7 +78,7 @@ public class Post extends BaseEntity {
 
     private static void validateAuthor(Account author) {
         if (author == null) {
-            throw new IllegalStateException("게시물의 작성자가 유효하지 않아요.");
+            throw new IllegalArgumentException("게시물의 작성자가 유효하지 않아요.");
         }
     }
 

@@ -1,6 +1,9 @@
 package imwhs.krit_server_sandbox.service;
 
 import imwhs.krit_server_sandbox.domain.Account;
+import imwhs.krit_server_sandbox.exception.account.AccountDuplicateEmailException;
+import imwhs.krit_server_sandbox.exception.account.AccountDuplicateHandleException;
+import imwhs.krit_server_sandbox.exception.account.AccountNotFoundException;
 import imwhs.krit_server_sandbox.repository.AccountRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,12 +24,12 @@ public class AccountService {
     public Account register(String handle, String email, String password) {
         boolean isExistByHandle = accountRepository.existsByHandleAndDeletedAtIsNull(handle);
         if (isExistByHandle) {
-            throw new IllegalStateException("이미 " + handle + "을 공개 식별자(핸들)로 사용하고 있는 계정이 있어요.");
+            throw new AccountDuplicateHandleException(handle);
         }
 
         boolean isExistByEmail = accountRepository.existsByEmailAndDeletedAtIsNull(email);
         if (isExistByEmail) {
-            throw new IllegalStateException(email + "은 이미 다른 계정에서 사용하고 있는 이메일 주소예요.");
+            throw new AccountDuplicateEmailException(email);
         }
 
         String encodedPassword = passwordEncoder.encode(password);
@@ -41,7 +44,7 @@ public class AccountService {
         }
 
         Account account = accountRepository.findByIdAndDeletedAtIsNull(id).orElseThrow(() ->
-                new NoSuchElementException("ID가 " + id + "인 계정을 찾을 수 없어요."));
+                new AccountNotFoundException(id));
 
         return account;
     }
@@ -52,7 +55,7 @@ public class AccountService {
         }
 
         Account account = accountRepository.findByHandleAndDeletedAtIsNull(handle).orElseThrow(() ->
-                new NoSuchElementException("핸들(" + handle + ")에 해당하는 계정을 찾을 수 없어요."));
+                new AccountNotFoundException("공개 식별자(핸들)가 " + handle + "인 해당하는 계정을 찾을 수 없어요."));
 
         return account;
     }
@@ -79,7 +82,7 @@ public class AccountService {
     @Transactional
     public void softDelete(Long id, Long actorId) {
         Account actor = accountRepository.findById(actorId).orElseThrow(() ->
-                new NoSuchElementException("계정 삭제를 요청한 계정의 ID가 유효하지 않아요."));
+                new AccountNotFoundException(id));
 
         Account account = get(id);
         account.softDelete(actor.getId());
