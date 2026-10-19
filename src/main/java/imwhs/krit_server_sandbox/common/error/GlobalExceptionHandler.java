@@ -25,29 +25,29 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = AccountDuplicateEmailException.class)
     public ResponseEntity<ErrorResponse> handleAccountDuplicateEmailException(AccountDuplicateEmailException e) {
         return new ResponseEntity<>(
-                new ErrorResponse(e.getErrorCode(), e.getMessage(), LocalDateTime.now()),
-                e.getHttpStatus());
+                new ErrorResponse(e.getErrorType().name(), e.getMessage(), LocalDateTime.now()),
+                e.getErrorType().getHttpStatus());
     }
 
     @ExceptionHandler(value = AccountDuplicateHandleException.class)
     public ResponseEntity<ErrorResponse> handleAccountDuplicateHandleException(AccountDuplicateHandleException e) {
         return new ResponseEntity<>(
-                new ErrorResponse(e.getErrorCode(), e.getMessage(), LocalDateTime.now()),
-                e.getHttpStatus());
+                new ErrorResponse(e.getErrorType().name(), e.getMessage(), LocalDateTime.now()),
+                e.getErrorType().getHttpStatus());
     }
 
     @ExceptionHandler(value = AccountNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleAccountNotFoundException(AccountNotFoundException e) {
         return new ResponseEntity<>(
-                new ErrorResponse(e.getErrorCode(), e.getMessage(), LocalDateTime.now()),
-                e.getHttpStatus());
+                new ErrorResponse(e.getErrorType().name(), e.getMessage(), LocalDateTime.now()),
+                e.getErrorType().getHttpStatus());
     }
 
     @ExceptionHandler(value = PostNotFoundException.class)
     public ResponseEntity<ErrorResponse> handlePostNotFoundException(PostNotFoundException e) {
         return new ResponseEntity<>(
-                new ErrorResponse(e.getErrorCode(), e.getMessage(), LocalDateTime.now()),
-                e.getHttpStatus());
+                new ErrorResponse(e.getErrorType().name(), e.getMessage(), LocalDateTime.now()),
+                e.getErrorType().getHttpStatus());
     }
 
     /**
