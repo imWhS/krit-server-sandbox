@@ -3,7 +3,7 @@ package imwhs.krit_server_sandbox.common.error;
 import java.time.LocalDateTime;
 
 public record ErrorResponse(
-   String code,
+   String errorCode,
    String message,
    LocalDateTime timestamp
 ) {}

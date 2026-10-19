@@ -1,10 +1,12 @@
 package imwhs.krit_server_sandbox.common.error;
 
+import imwhs.krit_server_sandbox.exception.BaseException;
 import imwhs.krit_server_sandbox.exception.account.AccountDuplicateEmailException;
 import imwhs.krit_server_sandbox.exception.account.AccountDuplicateHandleException;
 import imwhs.krit_server_sandbox.exception.account.AccountNotFoundException;
 import imwhs.krit_server_sandbox.exception.post.PostNotFoundException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -21,28 +23,14 @@ import java.util.Objects;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(value = AccountDuplicateEmailException.class)
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleAccountDuplicateEmailException(AccountDuplicateEmailException e) {
-        return new ErrorResponse("ACCOUNT_DUPLICATE_EMAIL", e.getMessage(), LocalDateTime.now());
-    }
-
-    @ExceptionHandler(value = AccountDuplicateHandleException.class)
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleAccountDuplicateHandleException(AccountDuplicateHandleException e) {
-        return new ErrorResponse("ACCOUNT_DUPLICATE_HANDLE", e.getMessage(), LocalDateTime.now());
-    }
-
-    @ExceptionHandler(value = AccountNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleAccountNotFoundException(AccountNotFoundException e) {
-        return new ErrorResponse("ACCOUNT_NOT_FOUND", e.getMessage(), LocalDateTime.now());
-    }
-
-    @ExceptionHandler(value = PostNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handlePostNotFoundException(PostNotFoundException e) {
-        return new ErrorResponse("POST_NOT_FOUND", e.getMessage(), LocalDateTime.now());
+    @ExceptionHandler(value = BaseException.class)
+    public ResponseEntity<ErrorResponse> handleBaseException(BaseException e) {
+        return new ResponseEntity<>(
+                new ErrorResponse(
+                        e.getErrorType().name(),
+                        e.getMessage(),
+                        LocalDateTime.now()),
+                e.getErrorType().getHttpStatus());
     }
 
     /**
