@@ -1,15 +1,12 @@
 package imwhs.krit_server_sandbox.exception.post;
 
 import imwhs.krit_server_sandbox.common.error.ErrorType;
-import lombok.Getter;
+import imwhs.krit_server_sandbox.exception.BaseException;
 
-@Getter
-public class PostNotFoundException extends RuntimeException {
-
-    private final ErrorType errorType = ErrorType.POST_NOT_FOUND;
+public class PostNotFoundException extends BaseException {
 
     public PostNotFoundException(Long id) {
-        super("ID가 " + id + "인 게시물을 찾을 수 없어요.");
+        super(ErrorType.POST_NOT_FOUND, "ID가 " + id + "인 게시물을 찾을 수 없어요.");
     }
 
 }
