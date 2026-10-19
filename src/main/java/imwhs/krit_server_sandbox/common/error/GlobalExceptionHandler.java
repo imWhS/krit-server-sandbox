@@ -1,5 +1,6 @@
 package imwhs.krit_server_sandbox.common.error;
 
+import imwhs.krit_server_sandbox.exception.BaseException;
 import imwhs.krit_server_sandbox.exception.account.AccountDuplicateEmailException;
 import imwhs.krit_server_sandbox.exception.account.AccountDuplicateHandleException;
 import imwhs.krit_server_sandbox.exception.account.AccountNotFoundException;
@@ -22,31 +23,13 @@ import java.util.Objects;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(value = AccountDuplicateEmailException.class)
-    public ResponseEntity<ErrorResponse> handleAccountDuplicateEmailException(AccountDuplicateEmailException e) {
+    @ExceptionHandler(value = BaseException.class)
+    public ResponseEntity<ErrorResponse> handleBaseException(BaseException e) {
         return new ResponseEntity<>(
-                new ErrorResponse(e.getErrorType().name(), e.getMessage(), LocalDateTime.now()),
-                e.getErrorType().getHttpStatus());
-    }
-
-    @ExceptionHandler(value = AccountDuplicateHandleException.class)
-    public ResponseEntity<ErrorResponse> handleAccountDuplicateHandleException(AccountDuplicateHandleException e) {
-        return new ResponseEntity<>(
-                new ErrorResponse(e.getErrorType().name(), e.getMessage(), LocalDateTime.now()),
-                e.getErrorType().getHttpStatus());
-    }
-
-    @ExceptionHandler(value = AccountNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleAccountNotFoundException(AccountNotFoundException e) {
-        return new ResponseEntity<>(
-                new ErrorResponse(e.getErrorType().name(), e.getMessage(), LocalDateTime.now()),
-                e.getErrorType().getHttpStatus());
-    }
-
-    @ExceptionHandler(value = PostNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handlePostNotFoundException(PostNotFoundException e) {
-        return new ResponseEntity<>(
-                new ErrorResponse(e.getErrorType().name(), e.getMessage(), LocalDateTime.now()),
+                new ErrorResponse(
+                        e.getErrorType().name(),
+                        e.getMessage(),
+                        LocalDateTime.now()),
                 e.getErrorType().getHttpStatus());
     }
 
