@@ -2,13 +2,13 @@ package imwhs.krit_server_sandbox.service;
 
 import imwhs.krit_server_sandbox.domain.Account;
 import imwhs.krit_server_sandbox.domain.Post;
+import imwhs.krit_server_sandbox.exception.account.AccountNotFoundException;
+import imwhs.krit_server_sandbox.exception.post.PostNotFoundException;
 import imwhs.krit_server_sandbox.repository.AccountRepository;
 import imwhs.krit_server_sandbox.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.NoSuchElementException;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -21,7 +21,7 @@ public class PostService {
     @Transactional
     public Post register(Long authorId, String title, String content) {
         Account author = accountRepository.findById(authorId).orElseThrow(() ->
-                new NoSuchElementException("작성자의 ID가 유효하지 않아요."));
+                new AccountNotFoundException(authorId));
         Post post = Post.create(author, title, content);
         postRepository.save(post);
         return post;
@@ -29,7 +29,7 @@ public class PostService {
 
     public Post get(Long id) {
         Post post = postRepository.findByIdAndDeletedAtIsNull(id).orElseThrow(() ->
-                new NoSuchElementException("ID가 " + id + "인 게시물을 찾을 수 없어요."));
+                new PostNotFoundException(id));
         return post;
     }
 
@@ -55,7 +55,7 @@ public class PostService {
     @Transactional
     public void softDelete(Long id, Long actorId) {
         Account actor = accountRepository.findById(actorId).orElseThrow(() ->
-                new NoSuchElementException("게시물 삭제를 요청한 계정의 ID가 유효하지 않아요."));
+                new AccountNotFoundException(id));
         Post post = get(id);
         post.softDelete(actor.getId());
     }
