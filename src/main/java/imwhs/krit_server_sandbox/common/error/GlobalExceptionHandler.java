@@ -24,25 +24,25 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = AccountDuplicateEmailException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse handleAccountDuplicateEmailException(AccountDuplicateEmailException e) {
-        return new ErrorResponse(e.getCode(), e.getMessage(), LocalDateTime.now());
+        return new ErrorResponse(e.getErrorCode(), e.getMessage(), LocalDateTime.now());
     }
 
     @ExceptionHandler(value = AccountDuplicateHandleException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse handleAccountDuplicateHandleException(AccountDuplicateHandleException e) {
-        return new ErrorResponse(e.getCode(), e.getMessage(), LocalDateTime.now());
+        return new ErrorResponse(e.getErrorCode(), e.getMessage(), LocalDateTime.now());
     }
 
     @ExceptionHandler(value = AccountNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleAccountNotFoundException(AccountNotFoundException e) {
-        return new ErrorResponse(e.getCode(), e.getMessage(), LocalDateTime.now());
+        return new ErrorResponse(e.getErrorCode(), e.getMessage(), LocalDateTime.now());
     }
 
     @ExceptionHandler(value = PostNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handlePostNotFoundException(PostNotFoundException e) {
-        return new ErrorResponse(e.getCode(), e.getMessage(), LocalDateTime.now());
+        return new ErrorResponse(e.getErrorCode(), e.getMessage(), LocalDateTime.now());
     }
 
     /**
