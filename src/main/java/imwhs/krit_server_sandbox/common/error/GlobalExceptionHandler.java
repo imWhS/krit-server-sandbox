@@ -5,6 +5,7 @@ import imwhs.krit_server_sandbox.exception.account.AccountDuplicateHandleExcepti
 import imwhs.krit_server_sandbox.exception.account.AccountNotFoundException;
 import imwhs.krit_server_sandbox.exception.post.PostNotFoundException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -22,27 +23,31 @@ import java.util.Objects;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = AccountDuplicateEmailException.class)
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleAccountDuplicateEmailException(AccountDuplicateEmailException e) {
-        return new ErrorResponse(e.getErrorCode(), e.getMessage(), LocalDateTime.now());
+    public ResponseEntity<ErrorResponse> handleAccountDuplicateEmailException(AccountDuplicateEmailException e) {
+        return new ResponseEntity<>(
+                new ErrorResponse(e.getErrorCode(), e.getMessage(), LocalDateTime.now()),
+                e.getHttpStatus());
     }
 
     @ExceptionHandler(value = AccountDuplicateHandleException.class)
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleAccountDuplicateHandleException(AccountDuplicateHandleException e) {
-        return new ErrorResponse(e.getErrorCode(), e.getMessage(), LocalDateTime.now());
+    public ResponseEntity<ErrorResponse> handleAccountDuplicateHandleException(AccountDuplicateHandleException e) {
+        return new ResponseEntity<>(
+                new ErrorResponse(e.getErrorCode(), e.getMessage(), LocalDateTime.now()),
+                e.getHttpStatus());
     }
 
     @ExceptionHandler(value = AccountNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleAccountNotFoundException(AccountNotFoundException e) {
-        return new ErrorResponse(e.getErrorCode(), e.getMessage(), LocalDateTime.now());
+    public ResponseEntity<ErrorResponse> handleAccountNotFoundException(AccountNotFoundException e) {
+        return new ResponseEntity<>(
+                new ErrorResponse(e.getErrorCode(), e.getMessage(), LocalDateTime.now()),
+                e.getHttpStatus());
     }
 
     @ExceptionHandler(value = PostNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handlePostNotFoundException(PostNotFoundException e) {
-        return new ErrorResponse(e.getErrorCode(), e.getMessage(), LocalDateTime.now());
+    public ResponseEntity<ErrorResponse> handlePostNotFoundException(PostNotFoundException e) {
+        return new ResponseEntity<>(
+                new ErrorResponse(e.getErrorCode(), e.getMessage(), LocalDateTime.now()),
+                e.getHttpStatus());
     }
 
     /**
