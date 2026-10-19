@@ -19,14 +19,20 @@ public class PostController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public PostResponse register(@Valid @RequestBody PostRegisterRequest request) {
+    public PostResponse registerPost(@Valid @RequestBody PostRegisterRequest request) {
         Post post = postService.register(request.authorId(), request.title(), request.content());
+        return PostResponse.from(post);
+    }
+
+    @GetMapping("/{id}")
+    public PostResponse getAccount(@PathVariable Long id) {
+        Post post = postService.get(id);
         return PostResponse.from(post);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PutMapping("/{id}")
-    public void update(
+    public void updatePost(
             @PathVariable Long id,
             @Valid @RequestBody PostUpdateRequest request) {
         postService.update(id, request.title(), request.content());
@@ -34,7 +40,7 @@ public class PostController {
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
-    public void softDelete(
+    public void softDeletePoste(
             @PathVariable Long id,
             @RequestParam Long actorId) { // TODO: 스프링 시큐리티 도입 후 세션 인증 정보에서 가져오도록 변경
         postService.softDelete(id, actorId);
