@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
@@ -31,6 +33,11 @@ public class PostService {
         Post post = postRepository.findByIdAndDeletedAtIsNull(id).orElseThrow(() ->
                 new PostNotFoundException(id));
         return post;
+    }
+
+    public List<Post> getAll() {
+        List<Post> posts = postRepository.findAllByDeletedAtIsNull();
+        return posts;
     }
 
     @Transactional
