@@ -27,11 +27,12 @@ public class PostService {
                 new AccountNotFoundException(authorId));
         Post post = Post.create(author, title, content);
         postRepository.save(post);
-        return PostInfo.from(post);
+        Post postWithAuthor = getWithAuthor(post.getId());
+        return PostInfo.from(postWithAuthor);
     }
 
     public PostInfo getInfo(Long id) {
-        Post post = get(id);
+        Post post = getWithAuthor(id);
         return PostInfo.from(post);
     }
 
@@ -71,6 +72,10 @@ public class PostService {
 
     private Post get(Long id) {
         return postRepository.findByIdAndDeletedAtIsNull(id).orElseThrow(() -> new PostNotFoundException(id));
+    }
+
+    private Post getWithAuthor(Long id) {
+        return postRepository.findWithAuthorByIdDeletedAtIsNull(id).orElseThrow(() -> new PostNotFoundException(id));
     }
 
 }
