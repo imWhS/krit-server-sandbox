@@ -1,14 +1,15 @@
 package imwhs.krit_server_sandbox.controller;
 
-import imwhs.krit_server_sandbox.domain.Post;
 import imwhs.krit_server_sandbox.dto.PostRegisterRequest;
-import imwhs.krit_server_sandbox.dto.PostResponse;
+import imwhs.krit_server_sandbox.dto.PostInfo;
 import imwhs.krit_server_sandbox.dto.PostUpdateRequest;
 import imwhs.krit_server_sandbox.service.PostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequestMapping("/api/v0/posts")
 @RequiredArgsConstructor
@@ -19,15 +20,18 @@ public class PostController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public PostResponse registerPost(@Valid @RequestBody PostRegisterRequest request) {
-        Post post = postService.register(request.authorId(), request.title(), request.content());
-        return PostResponse.from(post);
+    public PostInfo registerPost(@Valid @RequestBody PostRegisterRequest request) {
+        return postService.register(request.authorId(), request.title(), request.content());
     }
 
     @GetMapping("/{id}")
-    public PostResponse getPost(@PathVariable Long id) {
-        Post post = postService.get(id);
-        return PostResponse.from(post);
+    public PostInfo getPostInfo(@PathVariable Long id) {
+        return postService.getInfo(id);
+    }
+
+    @GetMapping
+    public List<PostInfo> getAllPosts() {
+        return postService.getAllInfos();
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)

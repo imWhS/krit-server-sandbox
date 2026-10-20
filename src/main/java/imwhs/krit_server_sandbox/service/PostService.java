@@ -2,6 +2,7 @@ package imwhs.krit_server_sandbox.service;
 
 import imwhs.krit_server_sandbox.domain.Account;
 import imwhs.krit_server_sandbox.domain.Post;
+import imwhs.krit_server_sandbox.dto.PostInfo;
 import imwhs.krit_server_sandbox.exception.account.AccountNotFoundException;
 import imwhs.krit_server_sandbox.exception.post.PostNotFoundException;
 import imwhs.krit_server_sandbox.repository.AccountRepository;
@@ -21,23 +22,24 @@ public class PostService {
     private final AccountRepository accountRepository;
 
     @Transactional
-    public Post register(Long authorId, String title, String content) {
+    public PostInfo register(Long authorId, String title, String content) {
         Account author = accountRepository.findById(authorId).orElseThrow(() ->
                 new AccountNotFoundException(authorId));
         Post post = Post.create(author, title, content);
         postRepository.save(post);
-        return post;
+        return PostInfo.from(post);
     }
 
-    public Post get(Long id) {
-        Post post = postRepository.findByIdAndDeletedAtIsNull(id).orElseThrow(() ->
-                new PostNotFoundException(id));
-        return post;
+    public PostInfo getInfo(Long id) {
+        Post post = get(id);
+        return PostInfo.from(post);
     }
 
-    public List<Post> getAll() {
+    public List<PostInfo> getAllInfos() {
         List<Post> posts = postRepository.findAllByDeletedAtIsNull();
-        return posts;
+        return posts.stream()
+                .map(PostInfo::from)
+                .toList();
     }
 
     @Transactional
@@ -63,8 +65,12 @@ public class PostService {
     public void softDelete(Long id, Long actorId) {
         Account actor = accountRepository.findById(actorId).orElseThrow(() ->
                 new AccountNotFoundException(id));
-        Post post = get(id);
+        Post post = getInfo(id);
         post.softDelete(actor.getId());
+    }
+
+    private Post get(Long id) {
+        return postRepository.findByIdAndDeletedAtIsNull(id).orElseThrow(() -> new PostNotFoundException(id));
     }
 
 }
