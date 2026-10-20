@@ -64,7 +64,7 @@ public class PostService {
     @Transactional
     public void softDelete(Long id, Long actorId) {
         Account actor = accountRepository.findById(actorId).orElseThrow(() ->
-                new AccountNotFoundException(id));
+                new AccountNotFoundException(actorId));
         Post post = get(id);
         post.softDelete(actor.getId());
     }
