@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: krit-server-sandbox
+  jpa:
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+    open-in-view: false
+
+logging:
+  level:
+    org.hibernate.orm.jdbc.bind: off
+
+decorator:
+  datasource:
+    p6spy:
+      enable-logging: true
