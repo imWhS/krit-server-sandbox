@@ -36,7 +36,7 @@ public class PostService {
     }
 
     public List<PostInfo> getAllInfos() {
-        List<Post> posts = postRepository.findAllByDeletedAtIsNull();
+        List<Post> posts = postRepository.findAllWithAuthorByDeletedAtIsNull();
         return posts.stream()
                 .map(PostInfo::from)
                 .toList();
