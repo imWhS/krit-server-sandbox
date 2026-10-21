@@ -38,7 +38,7 @@ public class AccountController {
     @PutMapping("/{id}/password") // TODO: PATCH?
     public void updateAccountPassword(
             @PathVariable Long id,
-            @Valid @RequestBody AccountPasswordUpdateRequest request) {
+            @Valid @RequestBody AccountPasswordUpdateRequest request) { // TODO: 스프링 시큐리티 도입 후 권한 검증 추가
         accountService.updatePassword(id, request.password());
     }
 
@@ -46,7 +46,7 @@ public class AccountController {
     @PutMapping("/{id}/name") // TODO: PATCH?
     public void updateAccountName(
             @PathVariable Long id,
-            @Valid @RequestBody AccountNameUpdateRequest request) {
+            @Valid @RequestBody AccountNameUpdateRequest request) { // TODO: 스프링 시큐리티 도입 후 권한 검증 추가
         accountService.updateName(id, request.name());
     }
 
@@ -54,7 +54,7 @@ public class AccountController {
     @PutMapping("/{id}/imageUrl") // TODO: PATCH?
     public void updateAccountImageUrl(
             @PathVariable Long id,
-            @Valid @RequestBody AccountImageUrlUpdateRequest request) {
+            @Valid @RequestBody AccountImageUrlUpdateRequest request) { // TODO: 스프링 시큐리티 도입 후 권한 검증 추가
         accountService.updateImageUrl(id, request.imageUrl());
     }
 

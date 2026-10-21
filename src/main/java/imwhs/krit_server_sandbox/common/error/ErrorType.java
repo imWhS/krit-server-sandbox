@@ -8,10 +8,12 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum ErrorType {
 
+    ACCOUNT_UNAUTHORIZED(HttpStatus.FORBIDDEN),
     ACCOUNT_DUPLICATE_EMAIL(HttpStatus.CONFLICT),
     ACCOUNT_DUPLICATE_HANDLE(HttpStatus.CONFLICT),
     ACCOUNT_NOT_FOUND(HttpStatus.NOT_FOUND),
-    POST_NOT_FOUND(HttpStatus.NOT_FOUND);
+    POST_NOT_FOUND(HttpStatus.NOT_FOUND),
+    COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND);
 
     private final HttpStatus httpStatus;
 

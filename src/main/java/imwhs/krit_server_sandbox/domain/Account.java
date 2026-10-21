@@ -1,11 +1,13 @@
 package imwhs.krit_server_sandbox.domain;
 
+import imwhs.krit_server_sandbox.exception.account.AccountUnauthorizedException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 @Getter
@@ -111,7 +113,7 @@ public class Account extends BaseEntity {
      * 논리적 삭제 여부를 나타냅니다.
      * @return 논리적 삭제 여부
      */
-    public boolean isDeleted() {
+    public boolean isSoftDeleted() {
         return deletedAt != null;
     }
 
@@ -120,8 +122,16 @@ public class Account extends BaseEntity {
      * @param actorId 삭제를 요청한 계정의 ID
      */
     public void softDelete(Long actorId) {
+        if (actorId == null) {
+            throw new IllegalArgumentException("계정 삭제를 요청한 계정의 ID가 유효하지 않아요.");
+        }
+
+        if (!Objects.equals(actorId, this.getId())) {
+            throw new AccountUnauthorizedException();
+        }
+
         // 이미 논리적 삭제된 상태여도 멱등하게 처리합니다.
-        if (isDeleted()) { return; }
+        if (isSoftDeleted()) { return; }
         deletedAt = LocalDateTime.now();
         this.deletedBy = actorId;
     }

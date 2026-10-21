@@ -12,17 +12,17 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     Optional<Post> findByIdAndDeletedAtIsNull(Long id);
 
+    boolean existsByIdAndDeletedAtIsNull(Long id);
+
     @Query("""
             SELECT p
             FROM Post p
             JOIN FETCH p.author
             WHERE
-                p.id = :id AND 
+                p.id = :id AND
                 p.deletedAt IS null
     """)
     Optional<Post> findWithAuthorByIdDeletedAtIsNull(@Param("id") Long id);
-
-    List<Post> findAllByDeletedAtIsNull();
 
     @Query("""
             SELECT p

@@ -5,6 +5,6 @@ import org.hibernate.validator.constraints.URL;
 
 public record AccountImageUrlUpdateRequest(
         @URL
-        @NotBlank
+        @NotBlank(message = "이미지의 URL은 필수 항목이에요.")
         String imageUrl
 ) {}

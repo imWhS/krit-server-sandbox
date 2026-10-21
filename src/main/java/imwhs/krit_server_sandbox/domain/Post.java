@@ -1,11 +1,13 @@
 package imwhs.krit_server_sandbox.domain;
 
+import imwhs.krit_server_sandbox.exception.account.AccountUnauthorizedException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -45,23 +47,48 @@ public class Post extends BaseEntity {
     private Long deletedBy;
 
     /**
-     * 논리적으로 삭제합니다.
-     * @param requesterId 삭제를 요청한 계정의 ID
+     * 논리적 삭제 여부를 나타냅니다.
+     * @return 논리적 삭제 여부
      */
-    public void softDelete(Long requesterId) {
+    public boolean isSoftDeleted() {
+        return deletedAt != null;
+    }
+
+    /**
+     * 논리적으로 삭제합니다.
+     * @param actorId 삭제를 요청한 계정의 ID
+     */
+    public void softDelete(Long actorId) {
+        if (actorId == null) {
+            throw new IllegalArgumentException("게시물 삭제를 요청한 계정의 ID가 유효하지 않아요.");
+        }
+
+        if (!Objects.equals(actorId, this.author.getId())) {
+            throw new AccountUnauthorizedException();
+        }
+
         // 이미 논리적 삭제된 상태여도 멱등하게 처리합니다.
         if (deletedAt != null || deletedBy != null) { return; }
+
         deletedAt = LocalDateTime.now();
-        deletedBy = requesterId;
+        deletedBy = actorId;
     }
 
     public Post updateTitle(String title) {
+        if (isSoftDeleted()) {
+            throw new IllegalArgumentException("논리적 삭제 처리된 게시물이어서 제목을 업데이트할 수 없어요.");
+        }
+
         validateTitle(title);
         this.title = title;
         return this;
     }
 
     public Post updateContent(String content) {
+        if (isSoftDeleted()) {
+            throw new IllegalArgumentException("논리적 삭제 처리된 게시물이어서 본문을 업데이트할 수 없어요.");
+        }
+
         this.content = content;
         return this;
     }
