@@ -23,12 +23,11 @@ public class PostService {
 
     @Transactional
     public PostInfo register(Long authorId, String title, String content) {
-        Account author = accountRepository.findById(authorId).orElseThrow(() ->
+        Account author = accountRepository.findByIdAndDeletedAtIsNull(authorId).orElseThrow(() ->
                 new AccountNotFoundException(authorId));
         Post post = Post.create(author, title, content);
         postRepository.save(post);
-        Post postWithAuthor = getWithAuthor(post.getId());
-        return PostInfo.from(postWithAuthor);
+        return PostInfo.from(post);
     }
 
     public PostInfo getInfo(Long id) {
@@ -64,7 +63,7 @@ public class PostService {
 
     @Transactional
     public void softDelete(Long id, Long actorId) {
-        Account actor = accountRepository.findById(actorId).orElseThrow(() ->
+        Account actor = accountRepository.findByIdAndDeletedAtIsNull(actorId).orElseThrow(() ->
                 new AccountNotFoundException(actorId));
         Post post = get(id);
         post.softDelete(actor.getId());

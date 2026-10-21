@@ -83,7 +83,7 @@ public class AccountTest {
         account.softDelete(actorId);
 
         // then
-        Assertions.assertThat(account.isDeleted()).isTrue();
+        Assertions.assertThat(account.isSoftDeleted()).isTrue();
         Assertions.assertThat(account.getDeletedAt()).isNotNull();
         Assertions.assertThat(account.getDeletedBy()).isEqualTo(actorId);
     }

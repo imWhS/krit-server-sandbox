@@ -79,7 +79,7 @@ public class AccountService {
 
     @Transactional
     public void softDelete(Long id, Long actorId) {
-        Account actor = accountRepository.findById(actorId).orElseThrow(() ->
+        Account actor = accountRepository.findByIdAndDeletedAtIsNull(actorId).orElseThrow(() ->
                 new AccountNotFoundException(id));
 
         Account account = get(id);
