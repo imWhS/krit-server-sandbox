@@ -11,10 +11,10 @@ import imwhs.krit_server_sandbox.repository.AccountRepository;
 import imwhs.krit_server_sandbox.repository.CommentRepository;
 import imwhs.krit_server_sandbox.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -43,15 +43,13 @@ public class CommentService {
         return CommentInfo.from(comment);
     }
 
-    public List<CommentInfo> getAllInfosByPostId(Long id) {
+    public Page<CommentInfo> getAllInfosByPostId(Long id, Pageable pageable) {
         if (!postRepository.existsByIdAndDeletedAtIsNull(id)) {
             throw new PostNotFoundException(id);
         }
 
-        List<Comment> comments = commentRepository.findWithAuthorByPostIdAndDeletedAtIsNull(id);
-        return comments.stream()
-                .map(CommentInfo::from)
-                .toList();
+        Page<Comment> comments = commentRepository.findWithAuthorByPostIdAndDeletedAtIsNull(id, pageable);
+        return comments.map(CommentInfo::from);
     }
 
     @Transactional

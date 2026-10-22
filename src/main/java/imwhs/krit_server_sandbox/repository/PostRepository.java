@@ -1,11 +1,12 @@
 package imwhs.krit_server_sandbox.repository;
 
 import imwhs.krit_server_sandbox.domain.Post;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
@@ -24,12 +25,19 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     """)
     Optional<Post> findWithAuthorByIdDeletedAtIsNull(@Param("id") Long id);
 
-    @Query("""
+    @Query(
+            value = """
             SELECT p
             FROM Post p
             JOIN FETCH p.author
             WHERE p.deletedAt IS null
-            """)
-    List<Post> findAllWithAuthorByDeletedAtIsNull();
+            """,
+            countQuery = """
+            SELECT COUNT(p)
+            FROM Post p
+            WHERE p.deletedAt IS null
+            """
+    )
+    Page<Post> findAllWithAuthorByDeletedAtIsNull(Pageable pageable);
 
 }
