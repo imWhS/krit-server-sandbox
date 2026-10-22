@@ -8,10 +8,12 @@ import imwhs.krit_server_sandbox.service.CommentService;
 import imwhs.krit_server_sandbox.service.PostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RequestMapping("/api/v0/posts")
 @RequiredArgsConstructor
@@ -33,8 +35,9 @@ public class PostController {
     }
 
     @GetMapping
-    public List<PostInfo> getAllPosts() {
-        return postService.getAllInfos();
+    public Page<PostInfo> getAllPostInfos(
+            @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        return postService.getAllInfos(pageable);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -54,8 +57,10 @@ public class PostController {
     }
 
     @GetMapping("/{id}/comments")
-    public List<CommentInfo> getAllCommentInfos(@PathVariable Long id) {
-        return commentService.getAllInfosByPostId(id);
+    public Page<CommentInfo> getAllCommentInfos(
+            @PathVariable Long id,
+            @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        return commentService.getAllInfosByPostId(id, pageable);
     }
 
 }

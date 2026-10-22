@@ -8,6 +8,8 @@ import imwhs.krit_server_sandbox.exception.post.PostNotFoundException;
 import imwhs.krit_server_sandbox.repository.AccountRepository;
 import imwhs.krit_server_sandbox.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,11 +37,9 @@ public class PostService {
         return PostInfo.from(post);
     }
 
-    public List<PostInfo> getAllInfos() {
-        List<Post> posts = postRepository.findAllWithAuthorByDeletedAtIsNull();
-        return posts.stream()
-                .map(PostInfo::from)
-                .toList();
+    public Page<PostInfo> getAllInfos(Pageable pageable) {
+        Page<Post> posts = postRepository.findAllWithAuthorByDeletedAtIsNull(pageable);
+        return posts.map(PostInfo::from);
     }
 
     @Transactional
