@@ -1,4 +1,4 @@
-package imwhs.krit_server_sandbox.dto;
+package imwhs.krit_server_sandbox.dto.account;
 
 import jakarta.validation.constraints.NotBlank;
 import org.hibernate.validator.constraints.URL;

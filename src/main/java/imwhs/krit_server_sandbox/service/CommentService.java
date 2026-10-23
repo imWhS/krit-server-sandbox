@@ -3,7 +3,7 @@ package imwhs.krit_server_sandbox.service;
 import imwhs.krit_server_sandbox.domain.Account;
 import imwhs.krit_server_sandbox.domain.Comment;
 import imwhs.krit_server_sandbox.domain.Post;
-import imwhs.krit_server_sandbox.dto.CommentInfo;
+import imwhs.krit_server_sandbox.dto.comment.CommentInfo;
 import imwhs.krit_server_sandbox.exception.account.AccountNotFoundException;
 import imwhs.krit_server_sandbox.exception.comment.CommentNotFoundException;
 import imwhs.krit_server_sandbox.exception.post.PostNotFoundException;

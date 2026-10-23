@@ -1,7 +1,7 @@
 package imwhs.krit_server_sandbox.controller;
 
 import imwhs.krit_server_sandbox.domain.Account;
-import imwhs.krit_server_sandbox.dto.*;
+import imwhs.krit_server_sandbox.dto.account.*;
 import imwhs.krit_server_sandbox.service.AccountService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

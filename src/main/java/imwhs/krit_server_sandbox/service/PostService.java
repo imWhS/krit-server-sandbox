@@ -2,7 +2,7 @@ package imwhs.krit_server_sandbox.service;
 
 import imwhs.krit_server_sandbox.domain.Account;
 import imwhs.krit_server_sandbox.domain.Post;
-import imwhs.krit_server_sandbox.dto.PostInfo;
+import imwhs.krit_server_sandbox.dto.post.PostInfo;
 import imwhs.krit_server_sandbox.exception.account.AccountNotFoundException;
 import imwhs.krit_server_sandbox.exception.post.PostNotFoundException;
 import imwhs.krit_server_sandbox.repository.AccountRepository;
@@ -12,8 +12,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor

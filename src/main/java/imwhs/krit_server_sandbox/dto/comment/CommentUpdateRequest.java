@@ -1,4 +1,4 @@
-package imwhs.krit_server_sandbox.dto;
+package imwhs.krit_server_sandbox.dto.comment;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

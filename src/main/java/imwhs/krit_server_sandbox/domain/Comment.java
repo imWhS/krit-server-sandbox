@@ -60,6 +60,10 @@ public class Comment extends BaseEntity {
 
     /**
      * 본문
+     *
+     * <ul>
+     *     <li> 최대 200자 길이의 문자열을 사용할 수 있습니다.</li>
+     * </ul>
      */
     @Column(length = 200, nullable = false)
     private String body; // content가 낫나?
