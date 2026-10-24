@@ -137,26 +137,32 @@ public class Account extends BaseEntity {
     }
 
     public static Account create(String handle, String email, String encodedPassword) {
-        validateHandle(handle);
-        validateEmail(email);
+        String normalizedHandle = validateAndNormalizeHandle(handle);
+        String normalizedEmail = validateAndNormalizeEmail(email);
         validateEncodedPassword(encodedPassword);
-        return new Account(handle, email, encodedPassword);
+        return new Account(normalizedHandle, normalizedEmail, encodedPassword);
     }
 
-    private static void validateHandle(String handle) {
+    private static String validateAndNormalizeHandle(String handle) {
         if (handle == null || handle.isBlank()) {
             throw new IllegalArgumentException("계정의 공개 식별자(핸들)가 유효하지 않아요.");
         }
 
-        if (!HANDLE_PATTERN.matcher(handle).matches()) {
+        String stripped = handle.strip();
+
+        if (!HANDLE_PATTERN.matcher(stripped).matches()) {
             throw new IllegalArgumentException("계정의 공개 식별자(핸들)는 최소 6자부터 최대 20자 이하 길이의 영어 알파벳 소문자, 숫자, 밑줄(_), 마침표(.)만 사용할 수 있어요.");
         }
+
+        return stripped;
     }
 
-    private static void validateEmail(String email) {
+    private static String validateAndNormalizeEmail(String email) {
         if (email == null || email.isBlank()) {
             throw new IllegalArgumentException("계정의 이메일 주소가 유효하지 않아요.");
         }
+        String stripped = email.strip();
+        return stripped;
     }
 
     private static void validateEncodedPassword(String encodedPassword) {
@@ -170,7 +176,7 @@ public class Account extends BaseEntity {
             throw new IllegalArgumentException("계정의 이름이 유효하지 않아요.");
         }
 
-        if (name.length() < 1 || 40 < name.length()) {
+        if (name.isEmpty() || 40 < name.length()) {
             throw new IllegalArgumentException("계정의 이름은 최소 2자부터 최대 40자 이하 길이의 문자열만 사용할 수 있어요.");
         }
     }
