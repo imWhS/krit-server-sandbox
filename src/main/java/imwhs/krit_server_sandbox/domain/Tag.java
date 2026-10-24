@@ -18,7 +18,7 @@ public class Tag extends BaseTimeEntity {
      * 이름
      *
      * <ul>
-     *     <li> 최대 40자 길이의 문자열을 사용할 수 있습니다.</li>
+     *     <li> 최대 40자 길이의 문자열을 사용할 수 있습니다. </li>
      * </ul>
      */
     @Column(length = 40, nullable = false, unique = true)
@@ -34,6 +34,12 @@ public class Tag extends BaseTimeEntity {
     private static void validateName(String name) {
         if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("태그의 이름이 유효하지 않아요.");
+        }
+
+        String stripped = name.strip();
+
+        if (40 < stripped.length()) {
+            throw new IllegalArgumentException("계정의 이름은 최대 40자 이하 길이의 문자열만 사용할 수 있어요.");
         }
     }
 
