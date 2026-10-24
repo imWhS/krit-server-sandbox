@@ -25,22 +25,24 @@ public class Tag extends BaseTimeEntity {
     private String name;
 
     public static Tag create(String name) {
-        validateName(name);
+        String normalizedName = validateAndNormalizeName(name);
         Tag tag = new Tag();
-        tag.name = name;
+        tag.name = normalizedName;
         return tag;
     }
 
-    private static void validateName(String name) {
+    private static String validateAndNormalizeName(String name) {
         if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("태그의 이름이 유효하지 않아요.");
         }
 
-        String stripped = name.strip();
+        String normalized = name.strip();
 
-        if (40 < stripped.length()) {
+        if (40 < normalized.length()) {
             throw new IllegalArgumentException("계정의 이름은 최대 40자 이하 길이의 문자열만 사용할 수 있어요.");
         }
+
+        return normalized;
     }
 
 }
