@@ -21,7 +21,7 @@ public class Tag extends BaseTimeEntity {
      *     <li> 최대 40자 길이의 문자열을 사용할 수 있습니다.</li>
      * </ul>
      */
-    @Column(length = 40, nullable = false)
+    @Column(length = 40, nullable = false, unique = true)
     private String name;
 
     public static Tag create(String name) {
