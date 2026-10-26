@@ -4,7 +4,10 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+import java.util.Set;
+
 public record PostRegisterRequest(
+
         @NotNull(message = "작성자의 ID는 필수 항목이에요.")
         Long authorId,
 
@@ -12,5 +15,8 @@ public record PostRegisterRequest(
         String title,
 
         @NotBlank(message = "본문은 필수 항목이에요.")
-        String content
+        String content,
+
+        Set<String> tagNames
+
 ) { }
