@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 
+@BatchSize(size = 10)
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
@@ -19,9 +21,10 @@ public class Tag extends BaseTimeEntity {
      *
      * <ul>
      *     <li> 최대 40자 길이의 문자열을 사용할 수 있습니다. </li>
+     *     <i> 다른 Tag의 이름과 중복될 수 없습니다. </i>
      * </ul>
      */
-    @Column(length = 40, nullable = false, unique = true)
+    @Column(length = 40, unique = true, nullable = false)
     private String name;
 
     public static Tag create(String name) {
