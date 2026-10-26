@@ -13,7 +13,8 @@ public enum ErrorType {
     ACCOUNT_DUPLICATE_HANDLE(HttpStatus.CONFLICT),
     ACCOUNT_NOT_FOUND(HttpStatus.NOT_FOUND),
     POST_NOT_FOUND(HttpStatus.NOT_FOUND),
-    COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND);
+    COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND),
+    TAG_DUPLICATE(HttpStatus.CONFLICT);
 
     private final HttpStatus httpStatus;
 

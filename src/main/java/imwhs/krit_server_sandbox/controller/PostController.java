@@ -1,9 +1,9 @@
 package imwhs.krit_server_sandbox.controller;
 
-import imwhs.krit_server_sandbox.dto.CommentInfo;
-import imwhs.krit_server_sandbox.dto.PostRegisterRequest;
-import imwhs.krit_server_sandbox.dto.PostInfo;
-import imwhs.krit_server_sandbox.dto.PostUpdateRequest;
+import imwhs.krit_server_sandbox.dto.comment.CommentInfo;
+import imwhs.krit_server_sandbox.dto.post.PostRegisterRequest;
+import imwhs.krit_server_sandbox.dto.post.PostInfo;
+import imwhs.krit_server_sandbox.dto.post.PostUpdateRequest;
 import imwhs.krit_server_sandbox.service.CommentService;
 import imwhs.krit_server_sandbox.service.PostService;
 import jakarta.validation.Valid;
@@ -26,7 +26,7 @@ public class PostController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public PostInfo registerPost(@Valid @RequestBody PostRegisterRequest request) {
-        return postService.register(request.authorId(), request.title(), request.content());
+        return postService.register(request.authorId(), request.title(), request.content(), request.tagNames());
     }
 
     @GetMapping("/{id}")
@@ -45,7 +45,7 @@ public class PostController {
     public void updatePost(
             @PathVariable Long id,
             @Valid @RequestBody PostUpdateRequest request) { // TODO: 스프링 시큐리티 도입 후 권한 검증 추가
-        postService.update(id, request.title(), request.content());
+        postService.update(id, request.title(), request.content(), request.tagNames());
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)

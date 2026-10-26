@@ -1,4 +1,4 @@
-package imwhs.krit_server_sandbox.dto;
+package imwhs.krit_server_sandbox.dto.account;
 
 import imwhs.krit_server_sandbox.domain.Account;
 
