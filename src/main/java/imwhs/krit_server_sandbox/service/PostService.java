@@ -95,7 +95,7 @@ public class PostService {
                         Collectors.mapping(postTagDto -> postTagDto.tagName(), Collectors.toSet())));
 
         List<PostInfo> postInfos = baseInfos.stream()
-                .map(baseInfo -> PostInfo.from(baseInfo, tagNamesByPostId.get(baseInfo.id())))
+                .map(baseInfo -> PostInfo.from(baseInfo, tagNamesByPostId.getOrDefault(baseInfo.id(), Set.of())))
                 .toList();
 
         Long nextCursor = null;
