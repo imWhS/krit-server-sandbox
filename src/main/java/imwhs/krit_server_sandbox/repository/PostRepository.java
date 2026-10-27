@@ -93,6 +93,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
         WHERE
             p.id < :cursor AND
             p.deletedAt IS null
+        ORDER BY p.id DESC
     """)
     Slice<PostBaseInfo> findNextBaseInfosByCursorDeletedAtIsNull(@Param("cursor") Long cursor, Pageable pageable);
 
