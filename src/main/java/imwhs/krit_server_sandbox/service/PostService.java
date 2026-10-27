@@ -64,7 +64,7 @@ public class PostService {
      * 커서를 기준으로 페이징된 Post 목록을 조회합니다.
      * @param cursor 커서
      * @param size 페이징 크기
-     * @return 커서를 기준으로 페이징된 Post 목록
+     * @return 커서를 기준으로 페이징된 Post 목록 및 커서 페이징 정보
      */
     public PostInfoCursorResponse getAllInfosByCursor(Long cursor, int size) {
         if (size < 10 || 100 < size) {
@@ -88,14 +88,14 @@ public class PostService {
                 .map(baseInfo -> baseInfo.id())
                 .collect(Collectors.toSet());
 
-        List<PostTagDto> tagNamesByPostId = postRepository.findAllTagNamesByPostIds(postIds);
-        Map<Long, Set<String>> tagNamesByPostIdMap = tagNamesByPostId.stream()
+        List<PostTagDto> postTagDtos = postRepository.findAllTagNamesByPostIds(postIds);
+        Map<Long, Set<String>> tagNamesByPostId = postTagDtos.stream()
                 .collect(Collectors.groupingBy(
                         postTagDto -> postTagDto.postId(),
                         Collectors.mapping(postTagDto -> postTagDto.tagName(), Collectors.toSet())));
 
         List<PostInfo> postInfos = baseInfos.stream()
-                .map(baseInfo -> PostInfo.from(baseInfo, tagNamesByPostIdMap.get(baseInfo.id())))
+                .map(baseInfo -> PostInfo.from(baseInfo, tagNamesByPostId.get(baseInfo.id())))
                 .toList();
 
         Long nextCursor = null;
