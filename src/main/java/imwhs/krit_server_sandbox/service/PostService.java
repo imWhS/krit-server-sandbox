@@ -64,9 +64,9 @@ public class PostService {
      * 커서를 기준으로 페이징된 Post 목록을 조회합니다.
      * @param cursor 커서
      * @param size 페이징 크기
-     * @return 커서를 기준으로 페이징된 Post 목록
+     * @return 커서를 기준으로 페이징된 Post 목록 및 커서 페이징 정보
      */
-    public PostInfoCursorResponse getAllInfosByCursor(Long cursor, int size) {
+    public PostInfoCursorResponse getInfosByCursor(Long cursor, int size) {
         if (size < 10 || 100 < size) {
             throw new IllegalArgumentException("페이징 크기는 10 이상 100 이하 사이의 자연수로만 설정할 수 있어요.");
         }
@@ -75,9 +75,9 @@ public class PostService {
         Slice<PostBaseInfo> baseInfos;
 
         if (cursor == null) {
-            baseInfos = postRepository.findFirstBaseInfosByDeletedAtIsNull(pageable);
+            baseInfos = postRepository.findLatestBaseInfosByDeletedAtIsNull(pageable);
         } else {
-            baseInfos = postRepository.findNextBaseInfosByCursorDeletedAtIsNull(cursor, pageable);
+            baseInfos = postRepository.findBaseInfosByBeforeCursorDeletedAtIsNull(cursor, pageable);
         }
 
         if (baseInfos.isEmpty()) {
@@ -88,14 +88,14 @@ public class PostService {
                 .map(baseInfo -> baseInfo.id())
                 .collect(Collectors.toSet());
 
-        List<PostTagDto> tagNamesByPostId = postRepository.findAllTagNamesByPostIds(postIds);
-        Map<Long, Set<String>> tagNamesByPostIdMap = tagNamesByPostId.stream()
+        List<PostTagDto> postTagDtos = postRepository.findAllTagNamesByPostIds(postIds);
+        Map<Long, Set<String>> tagNamesByPostId = postTagDtos.stream()
                 .collect(Collectors.groupingBy(
                         postTagDto -> postTagDto.postId(),
                         Collectors.mapping(postTagDto -> postTagDto.tagName(), Collectors.toSet())));
 
         List<PostInfo> postInfos = baseInfos.stream()
-                .map(baseInfo -> PostInfo.from(baseInfo, tagNamesByPostIdMap.get(baseInfo.id())))
+                .map(baseInfo -> PostInfo.from(baseInfo, tagNamesByPostId.getOrDefault(baseInfo.id(), Set.of())))
                 .toList();
 
         Long nextCursor = null;
@@ -112,7 +112,7 @@ public class PostService {
      * @param pageable 페이징 정보
      * @return 모든 Post 목록
      */
-    public Page<PostInfo> getAllInfos(Pageable pageable) {
+    public Page<PostInfo> getInfos(Pageable pageable) {
         Page<PostBaseInfo> baseInfos = postRepository.findAllBaseInfosByDeletedAtIsNull(pageable);
 
         if (baseInfos.isEmpty()) {

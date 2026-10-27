@@ -1,6 +1,7 @@
 package imwhs.krit_server_sandbox.controller;
 
 import imwhs.krit_server_sandbox.dto.comment.CommentInfo;
+import imwhs.krit_server_sandbox.dto.post.PostInfoCursorResponse;
 import imwhs.krit_server_sandbox.dto.post.PostRegisterRequest;
 import imwhs.krit_server_sandbox.dto.post.PostInfo;
 import imwhs.krit_server_sandbox.dto.post.PostUpdateRequest;
@@ -35,9 +36,16 @@ public class PostController {
     }
 
     @GetMapping
-    public Page<PostInfo> getAllPostInfos(
+    public Page<PostInfo> getPostInfos(
             @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
-        return postService.getAllInfos(pageable);
+        return postService.getInfos(pageable);
+    }
+
+    @GetMapping("/cursor")
+    public PostInfoCursorResponse getPostInfosByCursor(
+            @RequestParam(required = false) Long cursor,
+            @RequestParam(defaultValue = "10") int size) {
+        return postService.getInfosByCursor(cursor, size);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
