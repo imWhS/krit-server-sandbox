@@ -79,7 +79,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             p.deletedAt IS null
         ORDER BY p.id DESC
     """)
-    Slice<PostBaseInfo> findFirstBaseInfosByDeletedAtIsNull(Pageable pageable);
+    Slice<PostBaseInfo> findLatestBaseInfosByDeletedAtIsNull(Pageable pageable);
 
     @Query("""
         SELECT new imwhs.krit_server_sandbox.dto.post.PostBaseInfo(
@@ -95,6 +95,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             p.deletedAt IS null
         ORDER BY p.id DESC
     """)
-    Slice<PostBaseInfo> findNextBaseInfosByCursorDeletedAtIsNull(@Param("cursor") Long cursor, Pageable pageable);
+    Slice<PostBaseInfo> findBaseInfosByBeforeCursorDeletedAtIsNull(@Param("cursor") Long cursor, Pageable pageable);
 
 }

@@ -36,16 +36,16 @@ public class PostController {
     }
 
     @GetMapping
-    public Page<PostInfo> getAllPostInfos(
+    public Page<PostInfo> getPostInfos(
             @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
-        return postService.getAllInfos(pageable);
+        return postService.getInfos(pageable);
     }
 
     @GetMapping("/cursor")
-    public PostInfoCursorResponse getAllPostInfosByCursor(
+    public PostInfoCursorResponse getPostInfosByCursor(
             @RequestParam(required = false) Long cursor,
             @RequestParam(defaultValue = "10") int size) {
-        return postService.getAllInfosByCursor(cursor, size);
+        return postService.getInfosByCursor(cursor, size);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
