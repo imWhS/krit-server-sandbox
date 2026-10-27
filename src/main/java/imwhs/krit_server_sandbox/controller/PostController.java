@@ -1,6 +1,7 @@
 package imwhs.krit_server_sandbox.controller;
 
 import imwhs.krit_server_sandbox.dto.comment.CommentInfo;
+import imwhs.krit_server_sandbox.dto.comment.CommentInfoCursorResponse;
 import imwhs.krit_server_sandbox.dto.post.PostInfoCursorResponse;
 import imwhs.krit_server_sandbox.dto.post.PostRegisterRequest;
 import imwhs.krit_server_sandbox.dto.post.PostInfo;
@@ -46,6 +47,14 @@ public class PostController {
             @RequestParam(required = false) Long cursor,
             @RequestParam(defaultValue = "10") int size) {
         return postService.getInfosByCursor(cursor, size);
+    }
+
+    @GetMapping("/{id}/comments")
+    public CommentInfoCursorResponse getCommentInfos(
+            @PathVariable Long id,
+            @RequestParam(required = false) Long cursor,
+            @RequestParam(defaultValue = "10") int size) {
+        return postService.getCommentInfos(id, cursor, size);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)

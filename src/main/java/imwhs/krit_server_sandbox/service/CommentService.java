@@ -48,7 +48,7 @@ public class CommentService {
             throw new PostNotFoundException(id);
         }
 
-        Page<Comment> comments = commentRepository.findWithAuthorByPostIdAndDeletedAtIsNull(id, pageable);
+        Page<Comment> comments = commentRepository.findPagedWithAuthorByPostIdAndDeletedAtIsNull(id, pageable);
         return comments.map(CommentInfo::from);
     }
 

@@ -1,9 +1,8 @@
 package imwhs.krit_server_sandbox.service;
 
-import imwhs.krit_server_sandbox.domain.Account;
-import imwhs.krit_server_sandbox.domain.Post;
-import imwhs.krit_server_sandbox.domain.PostTag;
-import imwhs.krit_server_sandbox.domain.Tag;
+import imwhs.krit_server_sandbox.domain.*;
+import imwhs.krit_server_sandbox.dto.comment.CommentInfo;
+import imwhs.krit_server_sandbox.dto.comment.CommentInfoCursorResponse;
 import imwhs.krit_server_sandbox.dto.post.PostBaseInfo;
 import imwhs.krit_server_sandbox.dto.post.PostInfo;
 import imwhs.krit_server_sandbox.dto.post.PostInfoCursorResponse;
@@ -11,6 +10,7 @@ import imwhs.krit_server_sandbox.dto.post.PostTagDto;
 import imwhs.krit_server_sandbox.exception.account.AccountNotFoundException;
 import imwhs.krit_server_sandbox.exception.post.PostNotFoundException;
 import imwhs.krit_server_sandbox.repository.AccountRepository;
+import imwhs.krit_server_sandbox.repository.CommentRepository;
 import imwhs.krit_server_sandbox.repository.PostRepository;
 import imwhs.krit_server_sandbox.repository.TagRepository;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +29,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final AccountRepository accountRepository;
     private final TagRepository tagRepository;
+    private final CommentRepository commentRepository;
 
     @Transactional
     public PostInfo register(Long authorId, String title, String content, Set<String> tagNames) {
@@ -61,10 +62,10 @@ public class PostService {
     }
 
     /**
-     * 커서를 기준으로 페이징된 Post 목록을 조회합니다.
+     * 커서를 기준으로 페이징된 PostInfo(Post 주요 정보) 목록을 조회합니다.
      * @param cursor 커서
      * @param size 페이징 크기
-     * @return 커서를 기준으로 페이징된 Post 목록 및 커서 페이징 정보
+     * @return 커서를 기준으로 페이징된 PostInfo 목록 및 커서 페이징 정보
      */
     public PostInfoCursorResponse getInfosByCursor(Long cursor, int size) {
         if (size < 10 || 100 < size) {
@@ -107,7 +108,7 @@ public class PostService {
     }
 
     /**
-     * 모든 Post 목록을 조회합니다.
+     * PostInfo(Post 주요 정보) 목록을 조회합니다.
      * 필요한 경우, 페이징을 적용할 수 있습니다.
      * @param pageable 페이징 정보
      * @return 모든 Post 목록
@@ -140,6 +141,46 @@ public class PostService {
                 .toList();
 
         return new PageImpl<>(postInfos, pageable, baseInfos.getTotalElements());
+    }
+
+    /**
+     * Post에 달린 CommentInfo(Comment 주요 정보)을 조회합니다.
+     * 커서를 기준으로 페이징이 적용됩니다.
+     * @param id Post의 ID
+     * @param cursor 커서
+     * @param size 페이징 크기
+     * @return 커서를 기준으로 페이징된 CommentInfo 목록 및 커서 페이징 정보
+     */
+    public CommentInfoCursorResponse getCommentInfos(Long id, Long cursor, int size) {
+        if (size < 10 || 100 < size) {
+            throw new IllegalArgumentException("페이징 크기는 10 이상 100 이하 사이의 자연수로만 설정할 수 있어요.");
+        }
+
+        if (!postRepository.existsByIdAndDeletedAtIsNull(id)) { throw new PostNotFoundException(id); }
+
+        Pageable pageable = PageRequest.of(0, size);
+        Slice<Comment> comments;
+
+        if (cursor == null) {
+            comments = commentRepository.findLatestByPostIdAndDeletedAtIsNull(id, pageable);
+        } else {
+            comments = commentRepository.findByBeforeCursorPostIdAndDeletedAtIsNull(id, cursor, pageable);
+        }
+
+        if (comments.isEmpty()) {
+            return new CommentInfoCursorResponse(List.of(), false, null);
+        }
+
+        List<CommentInfo> commentInfos = comments.stream()
+                .map(comment -> CommentInfo.from(comment))
+                .collect(Collectors.toList());
+
+        Long nextCursor = null;
+        if (comments.hasNext()) {
+            nextCursor = commentInfos.get(commentInfos.size() - 1).id();
+        }
+
+        return new CommentInfoCursorResponse(commentInfos, comments.hasNext(), nextCursor);
     }
 
     /**
