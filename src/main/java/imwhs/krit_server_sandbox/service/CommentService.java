@@ -43,15 +43,6 @@ public class CommentService {
         return CommentInfo.from(comment);
     }
 
-    public Page<CommentInfo> getAllInfosByPostId(Long id, Pageable pageable) {
-        if (!postRepository.existsByIdAndDeletedAtIsNull(id)) {
-            throw new PostNotFoundException(id);
-        }
-
-        Page<Comment> comments = commentRepository.findPagedWithAuthorByPostIdAndDeletedAtIsNull(id, pageable);
-        return comments.map(CommentInfo::from);
-    }
-
     @Transactional
     public void updateBody(Long id, String body) {
         Comment comment = commentRepository.findByIdAndDeletedAtIsNull(id).orElseThrow(

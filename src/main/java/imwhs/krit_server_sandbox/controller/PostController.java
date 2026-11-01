@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.*;
 public class PostController {
 
     private final PostService postService;
-    private final CommentService commentService;
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
@@ -71,13 +70,6 @@ public class PostController {
             @PathVariable Long id,
             @RequestParam Long actorId) { // TODO: 스프링 시큐리티 도입 후 세션 인증 정보에서 가져오도록 변경
         postService.softDelete(id, actorId);
-    }
-
-    @GetMapping("/{id}/comments")
-    public Page<CommentInfo> getAllCommentInfos(
-            @PathVariable Long id,
-            @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
-        return commentService.getAllInfosByPostId(id, pageable);
     }
 
 }
