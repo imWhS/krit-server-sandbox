@@ -12,6 +12,19 @@ import java.util.regex.Pattern;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(
+        name = "account",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uk_account_handle",
+                        columnNames = "handle"
+                ),
+                @UniqueConstraint(
+                        name = "uk_account_email",
+                        columnNames = "email"
+                )
+        }
+)
 @Entity
 public class Account extends BaseEntity {
 
@@ -32,7 +45,7 @@ public class Account extends BaseEntity {
      *     <li> 최소 6자부터 최대 20자 이하 길이의 영어 알파벳 소문자, 숫자, 밑줄(_), 마침표(.)만 사용할 수 있습니다.  </li>
      * </ul>
      */
-    @Column(length = 20, unique = true, nullable = false)
+    @Column(length = 20, nullable = false)
     private String handle;
 
     /**
@@ -42,7 +55,7 @@ public class Account extends BaseEntity {
      *     <li> 계정 로그인 및 이메일 기반 기능에서 사용합니다. </li>
      * </ul>
      */
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private String email;
 
     /**
