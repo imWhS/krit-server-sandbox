@@ -14,7 +14,8 @@ public enum ErrorType {
     ACCOUNT_NOT_FOUND(HttpStatus.NOT_FOUND),
     POST_NOT_FOUND(HttpStatus.NOT_FOUND),
     COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND),
-    TAG_DUPLICATE(HttpStatus.CONFLICT);
+    TAG_DUPLICATE(HttpStatus.CONFLICT),
+    OPTIMISTIC_LOCK_CONFLICT(HttpStatus.CONFLICT);
 
     private final HttpStatus httpStatus;
 

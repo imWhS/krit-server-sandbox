@@ -5,6 +5,7 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -29,6 +30,18 @@ public class GlobalExceptionHandler {
                         e.getMessage(),
                         LocalDateTime.now()),
                 e.getErrorType().getHttpStatus());
+    }
+
+    @ExceptionHandler(value = ObjectOptimisticLockingFailureException.class)
+    public ResponseEntity<ErrorResponse> handleObjectOptimisticLockingFailureException(
+            ObjectOptimisticLockingFailureException e) {
+        return new ResponseEntity<>(
+                new ErrorResponse(
+                        ErrorType.OPTIMISTIC_LOCK_CONFLICT.name(),
+                        "요청을 처리하던 중에 다른 요청에 의해 정보가 수정됐어요. 수정된 정보를 확인하신 후 다시 시도해주세요.",
+                        LocalDateTime.now()),
+                ErrorType.OPTIMISTIC_LOCK_CONFLICT.getHttpStatus()
+        );
     }
 
     @ExceptionHandler(value = DataIntegrityViolationException.class)
