@@ -24,6 +24,18 @@ public class Post extends BaseEntity {
     private Long id;
 
     /**
+     * 엔티티 데이터 버전
+     *
+     * <p>
+     *     낙관적 락을 구현해서 데이터의 동시성을 제어하기 위해 사용합니다.
+     *     업데이트 처리 시 버전이 충돌한 경우 ObjectOptimisticLockingFailureException이 throw 됩니다.
+     * </p>
+     */
+    @Version
+    @Column(nullable = false)
+    private Long version;
+
+    /**
      * 작성자
      *
      * <ul>
