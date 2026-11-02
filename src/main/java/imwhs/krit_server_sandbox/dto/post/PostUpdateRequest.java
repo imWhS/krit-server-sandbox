@@ -1,11 +1,15 @@
 package imwhs.krit_server_sandbox.dto.post;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.util.Set;
 
 public record PostUpdateRequest(
+
+        @NotNull
+        Long version,
 
         @Size(max = 100, message = "제목은 최대 100자 이하의 길이여야 해요.")
         String title,

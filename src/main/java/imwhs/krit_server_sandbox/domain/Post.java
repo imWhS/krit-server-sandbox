@@ -29,6 +29,7 @@ public class Post extends BaseEntity {
      * <p>
      *     낙관적 락을 구현해서 데이터의 동시성을 제어하기 위해 사용합니다.
      *     업데이트 처리 시 버전이 충돌한 경우 ObjectOptimisticLockingFailureException이 throw 됩니다.
+     *     TODO: PostTag와의 연관 관계만 변경하는 경우의 동시성은 보호되지 않습니다.
      * </p>
      */
     @Version

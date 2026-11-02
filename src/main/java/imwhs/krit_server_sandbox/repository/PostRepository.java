@@ -36,6 +36,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             value = """
             SELECT new imwhs.krit_server_sandbox.dto.post.PostBaseInfo(
                 p.id,
+                p.version,
                 p.title,
                 p.content,
                 a.name
@@ -69,6 +70,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query("""
         SELECT new imwhs.krit_server_sandbox.dto.post.PostBaseInfo(
             p.id,
+            p.version,
             p.title,
             p.content,
             a.name
@@ -84,6 +86,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query("""
         SELECT new imwhs.krit_server_sandbox.dto.post.PostBaseInfo(
             p.id,
+            p.version,
             p.title,
             p.content,
             a.name

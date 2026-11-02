@@ -9,6 +9,7 @@ import imwhs.krit_server_sandbox.dto.post.PostInfoCursorResponse;
 import imwhs.krit_server_sandbox.dto.post.PostTagDto;
 import imwhs.krit_server_sandbox.exception.account.AccountNotFoundException;
 import imwhs.krit_server_sandbox.exception.post.PostNotFoundException;
+import imwhs.krit_server_sandbox.exception.post.PostVersionConflictException;
 import imwhs.krit_server_sandbox.repository.AccountRepository;
 import imwhs.krit_server_sandbox.repository.CommentRepository;
 import imwhs.krit_server_sandbox.repository.PostRepository;
@@ -186,14 +187,20 @@ public class PostService {
     /**
      * Post를 업데이트합니다.
      * @param id 업데이트할 Post의 ID
+     * @param version 업데이트할 Post의
      * @param title Post의 새 제목
      * @param content Post의 새 본문
      * @param tagNames Post에 새로 달 Tag의 이름 목록.
      *                 게시물의 태그 목록(Post.tags)에서 tagNames에 포함되지 않은 이름에 해당하는 PostTag는 삭제됩니다.
      */
     @Transactional
-    public void update(Long id, String title, String content, Set<String> tagNames) {
+    public void update(Long id, Long version, String title, String content, Set<String> tagNames) {
         Post post = getWithAuthorTags(id);
+
+        if (!Objects.equals(post.getVersion(), version)) {
+            throw new PostVersionConflictException();
+        }
+
         post.updateTitle(title);
         post.updateContent(content);
 
@@ -249,7 +256,7 @@ public class PostService {
         return postRepository.findByIdAndDeletedAtIsNull(id).orElseThrow(() -> new PostNotFoundException(id));
     }
 
-    private Post getWithAuthorTags(Long id) { // getWithAuthor에서 변경
+    private Post getWithAuthorTags(Long id) {
         return postRepository.findWithAuthorTagsByIdDeletedAtIsNull(id)
                 .orElseThrow(() -> new PostNotFoundException(id));
     }
