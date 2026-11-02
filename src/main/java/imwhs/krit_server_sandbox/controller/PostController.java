@@ -1,12 +1,10 @@
 package imwhs.krit_server_sandbox.controller;
 
-import imwhs.krit_server_sandbox.dto.comment.CommentInfo;
 import imwhs.krit_server_sandbox.dto.comment.CommentInfoCursorResponse;
 import imwhs.krit_server_sandbox.dto.post.PostInfoCursorResponse;
 import imwhs.krit_server_sandbox.dto.post.PostRegisterRequest;
 import imwhs.krit_server_sandbox.dto.post.PostInfo;
 import imwhs.krit_server_sandbox.dto.post.PostUpdateRequest;
-import imwhs.krit_server_sandbox.service.CommentService;
 import imwhs.krit_server_sandbox.service.PostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

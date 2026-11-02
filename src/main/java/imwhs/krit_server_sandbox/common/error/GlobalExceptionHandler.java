@@ -1,10 +1,8 @@
 package imwhs.krit_server_sandbox.common.error;
 
 import imwhs.krit_server_sandbox.exception.BaseException;
-import imwhs.krit_server_sandbox.exception.account.AccountDuplicateEmailException;
-import imwhs.krit_server_sandbox.exception.account.AccountDuplicateHandleException;
-import imwhs.krit_server_sandbox.exception.account.AccountNotFoundException;
-import imwhs.krit_server_sandbox.exception.post.PostNotFoundException;
+import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.ObjectError;
@@ -31,6 +29,61 @@ public class GlobalExceptionHandler {
                         e.getMessage(),
                         LocalDateTime.now()),
                 e.getErrorType().getHttpStatus());
+    }
+
+    @ExceptionHandler(value = DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponse> handleDataIntegrityViolationException(DataIntegrityViolationException e) {
+        Throwable cause = e;
+
+        // 데이터 무결성 예외가 발생한 원인이 된 예외를 찾습니다.
+        while (cause != null) {
+            // 데이터베이스에서 발생한 위배된 제약 조건에 대한 정보를 찾습니다.
+            if (cause instanceof ConstraintViolationException violationException &&
+                violationException.getKind() == ConstraintViolationException.ConstraintKind.UNIQUE) {
+                String constraintName = violationException.getConstraintName();
+
+                // 위배된 제약 조건 이름을 이용해 적절한 오류 메시지를 생성합니다.
+                if (constraintName != null) {
+                    // 제약 조건 이름이 PUBLIC.UK_ACCOUNT_HANDLE INDEX PUBLIC.UK_ACCOUNT_HANDLE_INDEX_E"라면,
+                    // H2가 덧붙인 "INDEX PUBLIC.UK_ACCOUNT_HANDLE_INDEX_E"와 맨 앞의 "PUBLIC."를 제거해
+                    // "UK_ACCOUNT_HANDLE"만 남깁니다.
+                    String name = constraintName.split("\\s+INDEX\\s+", 2)[0];
+                    name = name.substring(name.lastIndexOf('.') + 1);
+
+                    if (name.equals("UK_ACCOUNT_HANDLE")) {
+                        return new ResponseEntity<>(
+                                new ErrorResponse(
+                                        ErrorType.ACCOUNT_DUPLICATE_HANDLE.name(),
+                                        "이미 해당 공개 식별자(핸들)을 사용하고 있는 계정이 있어요.",
+                                        LocalDateTime.now()
+                                ),
+                                ErrorType.ACCOUNT_DUPLICATE_HANDLE.getHttpStatus()
+                        );
+                    } else if (name.equals("UK_ACCOUNT_EMAIL")) {
+                        return new ResponseEntity<>(
+                                new ErrorResponse(
+                                        ErrorType.ACCOUNT_DUPLICATE_EMAIL.name(),
+                                        "이미 해당 이메일 주소를 사용하고 있는 계정이 있어요.",
+                                        LocalDateTime.now()
+                                ),
+                                ErrorType.ACCOUNT_DUPLICATE_EMAIL.getHttpStatus()
+                        );
+                    }
+                }
+
+                break;
+            }
+
+            cause = cause.getCause();
+        }
+
+        return new ResponseEntity<>(
+                new ErrorResponse(
+                        "DATA_INTEGRITY_VIOLATION",
+                        "정보를 저장하는 과정 중 오류가 발생했어요.",
+                        LocalDateTime.now()),
+                HttpStatus.INTERNAL_SERVER_ERROR
+        );
     }
 
     /**
