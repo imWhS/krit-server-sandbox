@@ -59,7 +59,7 @@ public class PostController {
     public void updatePost(
             @PathVariable Long id,
             @Valid @RequestBody PostUpdateRequest request) { // TODO: 스프링 시큐리티 도입 후 권한 검증 추가
-        postService.update(id, request.title(), request.content(), request.tagNames());
+        postService.update(id, request.version(), request.title(), request.content(), request.tagNames());
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)

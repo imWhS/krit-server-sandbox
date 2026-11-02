@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 public record PostInfo(
         Long id,
+        Long version,
         String title,
         String content,
         String authorName,
@@ -24,11 +25,11 @@ public record PostInfo(
 
         PostInfo postInfo = new PostInfo(
                 post.getId(),
+                post.getVersion(),
                 post.getTitle(),
                 post.getContent(),
                 post.getAuthor().getName(),
-                tagNames
-                );
+                tagNames);
 
         return postInfo;
     }
@@ -36,6 +37,7 @@ public record PostInfo(
     public static PostInfo from(PostBaseInfo baseInfo, Set<String> tagNames) {
         PostInfo postInfo = new PostInfo(
                 baseInfo.id(),
+                baseInfo.version(),
                 baseInfo.title(),
                 baseInfo.content(),
                 baseInfo.authorName(),
