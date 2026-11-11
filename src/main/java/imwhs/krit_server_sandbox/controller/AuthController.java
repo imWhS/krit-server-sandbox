@@ -25,7 +25,7 @@ public class AuthController {
     /**
      * 가입된 계정으로 로그인 합니다.
      * 로그인은 사용자 계정 인증 및 토큰 발급 과정으로 구성됩니다.
-     * @param request
+     * @param request 로그인 요청 인스턴스
      * @return 로그인 정보를 담은 응답 인스턴스
      */
     @PostMapping("/login")
