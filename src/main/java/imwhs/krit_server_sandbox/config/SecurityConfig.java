@@ -47,8 +47,8 @@ public class SecurityConfig {
     @Bean
     public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
         UserDetails userDetails = User.builder()
-                .username("user")
-                .password(passwordEncoder().encode("1234"))
+                .username("heextory@icloud.com")
+                .password(passwordEncoder.encode("1q2w3e4r!"))
                 .roles("USER")
                 .build();
 
