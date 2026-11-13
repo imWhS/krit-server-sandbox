@@ -51,12 +51,6 @@ public class CommentService {
             throw new AccessDeniedException("댓글의 작성자가 아니어서, 댓글을 수정할 권한이 없어요.");
         }
 
-        boolean isExistingAuthor = accountRepository.existsByIdAndDeletedAtIsNull(authorId);
-
-        if (!isExistingAuthor) {
-            throw new AccountNotFoundException(authorId);
-        }
-
         comment.updateBody(body);
     }
 
@@ -67,12 +61,6 @@ public class CommentService {
 
         if (comment.isSoftDeleted()) {
             throw new IllegalArgumentException("이미 논리적 삭제 처리된 댓글이에요.");
-        }
-
-        boolean isExistingActor = accountRepository.existsByIdAndDeletedAtIsNull(actorId);
-
-        if (!isExistingActor) {
-            throw new AccountNotFoundException(actorId);
         }
 
         comment.softDelete(actorId);

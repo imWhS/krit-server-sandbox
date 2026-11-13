@@ -204,12 +204,6 @@ public class PostService {
             throw new AccessDeniedException("게시물의 작성자가 아니어서, 게시물을 수정할 권한이 없어요.");
         }
 
-        boolean isExistingAuthor = accountRepository.existsByIdAndDeletedAtIsNull(authorId);
-
-        if (!isExistingAuthor) {
-            throw new AccountNotFoundException(authorId);
-        }
-
         if (!Objects.equals(post.getVersion(), version)) {
             throw new PostVersionConflictException();
         }
@@ -248,11 +242,6 @@ public class PostService {
     @Transactional
     public void softDelete(Long id, Long actorId) {
         Post post = get(id);
-        boolean isExistingActor = accountRepository.existsByIdAndDeletedAtIsNull(actorId);
-
-        if (!isExistingActor) {
-            throw new AccountNotFoundException(actorId);
-        }
 
         post.softDelete(actorId);
     }

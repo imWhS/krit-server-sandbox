@@ -43,7 +43,7 @@ public class CommentController {
     @DeleteMapping("/{id}")
     public void softDeleteComment(
             @PathVariable Long id,
-            @RequestParam Long actorId) { // TODO: 스프링 시큐리티 도입 후 세션 인증 정보에서 가져오도록 변경
+            @AuthenticatedKritAccountId Long actorId) {
         commentService.softDelete(id, actorId);
     }
 
