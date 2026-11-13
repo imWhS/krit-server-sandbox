@@ -63,6 +63,10 @@ public class CommentService {
             throw new IllegalArgumentException("이미 논리적 삭제 처리된 댓글이에요.");
         }
 
+        if (!comment.getAuthor().getId().equals(actorId)) {
+            throw new AccessDeniedException("댓글의 작성자가 아니어서, 댓글을 삭제할 권한이 없어요.");
+        }
+
         comment.softDelete(actorId);
     }
 

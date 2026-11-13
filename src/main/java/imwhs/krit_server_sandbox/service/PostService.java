@@ -243,6 +243,14 @@ public class PostService {
     public void softDelete(Long id, Long actorId) {
         Post post = get(id);
 
+        if (post.isSoftDeleted()) {
+            throw new IllegalArgumentException("이미 논리적 삭제 처리된 게시물이에요.");
+        }
+
+        if (!post.getAuthor().getId().equals(actorId)) {
+            throw new AccessDeniedException("게시물의 작성자가 아니어서, 게시물을 삭제할 권한이 없어요.");
+        }
+
         post.softDelete(actorId);
     }
 
