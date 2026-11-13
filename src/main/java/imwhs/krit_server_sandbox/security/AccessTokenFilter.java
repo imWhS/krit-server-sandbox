@@ -47,7 +47,7 @@ public class AccessTokenFilter extends OncePerRequestFilter {
             String email = jwtTokenProvider.extractEmailFromAccessToken(accessToken);
             System.out.println("액세스 토큰에서 이메일 주소를 추출했어요: " + email);
 
-            // 해당 이메일 주소를 사용 중인 계정의 정보를 UserDetails로 조회합니다.
+            // 해당 이메일 주소를 사용 중인 계정의 정보를 포함하는 UserDetails를 조회합니다.
             UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
             // UserDetails를 이용해 Authentication을 생성합니다.

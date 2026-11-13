@@ -5,18 +5,16 @@ import imwhs.krit_server_sandbox.security.JwtTokenProvider;
 import org.springframework.boot.security.autoconfigure.web.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -46,18 +44,6 @@ public class SecurityConfig {
         return new ProviderManager(provider);
     }
 
-    // TODO: TMP
-    @Bean
-    public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
-        UserDetails userDetails = User.builder()
-                .username("heextory@icloud.com")
-                .password(passwordEncoder.encode("1q2w3e4r!"))
-                .roles("USER")
-                .build();
-
-        return new InMemoryUserDetailsManager(userDetails);
-    }
-
     @Bean
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http,
@@ -74,7 +60,8 @@ public class SecurityConfig {
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(PathRequest.toH2Console()).permitAll()
-                        .requestMatchers("/api/v0/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v0/accounts").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v0/auth/login").permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(
                         // Tomcat FilterChain의 AuthenticationFilter 이전 위치에 HTTP 요청의 액세스 토큰을 검사하는 필터를 추가합니다.
