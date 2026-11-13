@@ -35,6 +35,11 @@ public class JwtTokenProvider {
                 .compact();
     }
 
+    /**
+     * JWT 형식의 액세스 토큰을 디코딩한 후 서명 및 만료 여부를 검증하고, 이메일 주소를 추출합니다.
+     * @param accessToken 액세스 토큰
+     * @return 이메일 주소
+     */
     public String extractEmailFromAccessToken(String accessToken) {
         Claims claims = Jwts.parser()
                 .verifyWith(secretKey)

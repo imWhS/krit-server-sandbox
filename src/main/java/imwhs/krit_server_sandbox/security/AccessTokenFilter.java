@@ -43,7 +43,7 @@ public class AccessTokenFilter extends OncePerRequestFilter {
         String accessToken = authorizationHeader.substring(7);
 
         try {
-            // 액세스 토큰 값에서 이메일 주소를 추출합니다.
+            // 액세스 토큰을 검증하고, 이메일 주소를 추출합니다.
             String email = jwtTokenProvider.extractEmailFromAccessToken(accessToken);
             System.out.println("액세스 토큰에서 이메일 주소를 추출했어요: " + email);
 
