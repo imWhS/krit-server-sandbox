@@ -30,8 +30,10 @@ public class AuthController {
      */
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
-        // AuthenticationManager를 통해 사용자 계정 인증을 시도합니다.
-        UsernamePasswordAuthenticationToken unauthenticated = UsernamePasswordAuthenticationToken.unauthenticated(request.email(), request.password());
+        // 로그인 요청 데이터의 이메일 주소로 AuthenticationManager를 통해 사용자 계정 인증을 시도합니다.
+        UsernamePasswordAuthenticationToken unauthenticated = UsernamePasswordAuthenticationToken.unauthenticated(
+                request.email(),
+                request.password());
         Authentication authenticated = authenticationManager.authenticate(unauthenticated);
 
         // AuthenticationManager를 통한 사용자 계정 인증에 성공한 경우, 액세스 토큰을 생성합니다.

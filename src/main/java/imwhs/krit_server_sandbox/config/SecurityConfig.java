@@ -1,5 +1,7 @@
 package imwhs.krit_server_sandbox.config;
 
+import imwhs.krit_server_sandbox.security.AccessTokenFilter;
+import imwhs.krit_server_sandbox.security.JwtTokenProvider;
 import org.springframework.boot.security.autoconfigure.web.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 public class SecurityConfig {
@@ -56,7 +59,11 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(
+            HttpSecurity http,
+            JwtTokenProvider jwtTokenProvider,
+            UserDetailsService userDetailsService
+    ) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
                 .formLogin(form -> form.disable())
@@ -69,6 +76,12 @@ public class SecurityConfig {
                         .requestMatchers(PathRequest.toH2Console()).permitAll()
                         .requestMatchers("/api/v0/auth/login").permitAll()
                         .anyRequest().authenticated())
+                .addFilterBefore(
+                        // Tomcat FilterChain의 AuthenticationFilter 이전 위치에 HTTP 요청의 액세스 토큰을 검사하는 필터를 추가합니다.
+                        new AccessTokenFilter(
+                                jwtTokenProvider,
+                                userDetailsService),
+                        UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(exceptionHandling ->
                         // 인증 없이 인증을 요구하는 엔드포인트로 HTTP 요청한 경우, 401 UNAUTHORIZED 상태 코드를 응답합니다.
                         exceptionHandling.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
