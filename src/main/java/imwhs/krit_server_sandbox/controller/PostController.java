@@ -62,15 +62,15 @@ public class PostController {
     public void updatePost(
             @PathVariable Long id,
             @Valid @RequestBody PostUpdateRequest request,
-            @AuthenticatedKritAccountId Long authorId) {
-        postService.update(authorId, id, request.version(), request.title(), request.content(), request.tagNames());
+            @AuthenticatedKritAccountId Long actorId) {
+        postService.update(actorId, id, request.version(), request.title(), request.content(), request.tagNames());
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
     public void softDeletePost(
             @PathVariable Long id,
-            @RequestParam Long actorId) { // TODO: 스프링 시큐리티 도입 후 세션 인증 정보에서 가져오도록 변경
+            @AuthenticatedKritAccountId Long actorId) {
         postService.softDelete(id, actorId);
     }
 
