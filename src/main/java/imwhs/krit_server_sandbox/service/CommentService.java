@@ -11,8 +11,7 @@ import imwhs.krit_server_sandbox.repository.AccountRepository;
 import imwhs.krit_server_sandbox.repository.CommentRepository;
 import imwhs.krit_server_sandbox.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,9 +43,19 @@ public class CommentService {
     }
 
     @Transactional
-    public void updateBody(Long id, String body) {
+    public void updateBody(Long authorId, Long id, String body) {
         Comment comment = commentRepository.findByIdAndDeletedAtIsNull(id).orElseThrow(
                 () -> new CommentNotFoundException(id));
+
+        if (!comment.getAuthor().getId().equals(authorId)) {
+            throw new AccessDeniedException("댓글의 작성자가 아니어서, 댓글을 수정할 권한이 없어요.");
+        }
+
+        boolean isExistingAuthor = accountRepository.existsByIdAndDeletedAtIsNull(authorId);
+
+        if (!isExistingAuthor) {
+            throw new AccountNotFoundException(authorId);
+        }
 
         comment.updateBody(body);
     }
@@ -60,10 +69,13 @@ public class CommentService {
             throw new IllegalArgumentException("이미 논리적 삭제 처리된 댓글이에요.");
         }
 
-        Account actor = accountRepository.findByIdAndDeletedAtIsNull(actorId).orElseThrow(
-                () -> new AccountNotFoundException(actorId));
+        boolean isExistingActor = accountRepository.existsByIdAndDeletedAtIsNull(actorId);
 
-        comment.softDelete(actor.getId());
+        if (!isExistingActor) {
+            throw new AccountNotFoundException(actorId);
+        }
+
+        comment.softDelete(actorId);
     }
 
 }

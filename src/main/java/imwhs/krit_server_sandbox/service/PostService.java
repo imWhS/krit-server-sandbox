@@ -198,13 +198,16 @@ public class PostService {
      */
     @Transactional
     public void update(Long authorId, Long id, Long version, String title, String content, Set<String> tagNames) {
-        Account author = accountRepository.findByIdAndDeletedAtIsNull(authorId)
-                .orElseThrow(() -> new AccountNotFoundException(id));
-
         Post post = getWithAuthorTags(id);
 
         if (!post.getAuthor().getId().equals(authorId)) {
-            throw new AccessDeniedException("게시물을 작성자가 아니어서, 게시물을 수정할 권한이 없어요.");
+            throw new AccessDeniedException("게시물의 작성자가 아니어서, 게시물을 수정할 권한이 없어요.");
+        }
+
+        boolean isExistingAuthor = accountRepository.existsByIdAndDeletedAtIsNull(authorId);
+
+        if (!isExistingAuthor) {
+            throw new AccountNotFoundException(authorId);
         }
 
         if (!Objects.equals(post.getVersion(), version)) {
@@ -243,23 +246,15 @@ public class PostService {
     }
 
     @Transactional
-    public void updateTitle(Long id, String title) {
-        Post post = get(id);
-        post.updateTitle(title);
-    }
-
-    @Transactional
-    public void updateContent(Long id, String content) {
-        Post post = get(id);
-        post.updateContent(content);
-    }
-
-    @Transactional
     public void softDelete(Long id, Long actorId) {
-        Account actor = accountRepository.findByIdAndDeletedAtIsNull(actorId)
-                .orElseThrow(() -> new AccountNotFoundException(actorId));
         Post post = get(id);
-        post.softDelete(actor.getId());
+        boolean isExistingActor = accountRepository.existsByIdAndDeletedAtIsNull(actorId);
+
+        if (!isExistingActor) {
+            throw new AccountNotFoundException(actorId);
+        }
+
+        post.softDelete(actorId);
     }
 
     private Post get(Long id) {

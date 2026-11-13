@@ -34,8 +34,9 @@ public class CommentController {
     @PutMapping("/{id}")
     public void updateComment(
             @PathVariable Long id,
-            @Valid @RequestBody CommentUpdateRequest request) { // TODO: 스프링 시큐리티 도입 후 권한 검증 추가
-        commentService.updateBody(id, request.body());
+            @Valid @RequestBody CommentUpdateRequest request,
+            @AuthenticatedKritAccountId Long actorId) {
+        commentService.updateBody(actorId, id, request.body());
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
