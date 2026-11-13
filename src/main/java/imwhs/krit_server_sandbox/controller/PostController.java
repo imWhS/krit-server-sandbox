@@ -5,6 +5,7 @@ import imwhs.krit_server_sandbox.dto.post.PostInfoCursorResponse;
 import imwhs.krit_server_sandbox.dto.post.PostRegisterRequest;
 import imwhs.krit_server_sandbox.dto.post.PostInfo;
 import imwhs.krit_server_sandbox.dto.post.PostUpdateRequest;
+import imwhs.krit_server_sandbox.security.annotation.AuthenticatedKritAccountId;
 import imwhs.krit_server_sandbox.service.PostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,8 +25,10 @@ public class PostController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public PostInfo registerPost(@Valid @RequestBody PostRegisterRequest request) {
-        return postService.register(request.authorId(), request.title(), request.content(), request.tagNames());
+    public PostInfo registerPost(
+            @Valid @RequestBody PostRegisterRequest request,
+            @AuthenticatedKritAccountId Long accountId) {
+        return postService.register(accountId, request.title(), request.content(), request.tagNames());
     }
 
     @GetMapping("/{id}")
