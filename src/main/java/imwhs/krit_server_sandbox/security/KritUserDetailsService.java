@@ -20,18 +20,12 @@ public class KritUserDetailsService implements UserDetailsService {
     private final AccountRepository accountRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public KritUserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Account account = accountRepository.findByEmailAndDeletedAtIsNull(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
 
         System.out.println(username + " 이메일 주소를 사용 중인 계정(" + account.getHandle() + ")을 찾았어요.");
-
-        UserDetails userDetails = User.builder()
-                .username(account.getEmail())
-                .password(account.getEncodedPassword())
-                .roles("USER")
-                .build();
-
+        KritUserDetails userDetails = new KritUserDetails(account);
         return userDetails;
     }
 
