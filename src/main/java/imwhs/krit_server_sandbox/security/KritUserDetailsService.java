@@ -22,7 +22,7 @@ public class KritUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Account account = accountRepository.findByEmailAndDeletedAtIsNull(username)
-                .orElseThrow(() -> new AccountNotFoundException(username));
+                .orElseThrow(() -> new UsernameNotFoundException(username));
 
         System.out.println(username + " 이메일 주소를 사용 중인 계정(" + account.getHandle() + ")을 찾았어요.");
 
