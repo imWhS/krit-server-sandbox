@@ -6,6 +6,7 @@ import imwhs.krit_server_sandbox.exception.account.AccountDuplicateHandleExcepti
 import imwhs.krit_server_sandbox.exception.account.AccountNotFoundException;
 import imwhs.krit_server_sandbox.repository.AccountRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,31 +60,48 @@ public class AccountService {
     }
 
     @Transactional
-    public void updatePassword(Long id, String password) {
+    public void updatePassword(Long actorId, Long id, String password) {
         Account account = get(id);
+
+        if (!account.getId().equals(actorId)) {
+            throw new AccessDeniedException("계정의 암호를 수정할 권한이 없어요.");
+        }
+
         String encodedPassword = passwordEncoder.encode(password);
         account.updateEncodedPassword(encodedPassword);
     }
 
     @Transactional
-    public void updateName(Long id, String name) {
+    public void updateName(Long actorId, Long id, String name) {
         Account account = get(id);
+
+        if (!account.getId().equals(actorId)) {
+            throw new AccessDeniedException("계정의 이름을 수정할 권한이 없어요.");
+        }
+
         account.updateName(name);
     }
 
     @Transactional
-    public void updateImageUrl(Long id, String imageUrl) {
+    public void updateImageUrl(Long actorId, Long id, String imageUrl) {
         Account account = get(id);
+
+        if (!account.getId().equals(actorId)) {
+            throw new AccessDeniedException("계정의 이미지 URL을 수정할 권한이 없어요.");
+        }
+
         account.updateImageUrl(imageUrl);
     }
 
     @Transactional
-    public void softDelete(Long id, Long actorId) {
-        Account actor = accountRepository.findByIdAndDeletedAtIsNull(actorId).orElseThrow(() ->
-                new AccountNotFoundException(id));
-
+    public void softDelete(Long actorId, Long id) {
         Account account = get(id);
-        account.softDelete(actor.getId());
+
+        if (!account.getId().equals(actorId)) {
+            throw new AccessDeniedException("계정을 삭제할 권한이 없어요.");
+        }
+
+        account.softDelete(actorId);
     }
 
 }
