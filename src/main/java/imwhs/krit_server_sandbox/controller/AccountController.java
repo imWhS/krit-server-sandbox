@@ -2,6 +2,7 @@ package imwhs.krit_server_sandbox.controller;
 
 import imwhs.krit_server_sandbox.domain.Account;
 import imwhs.krit_server_sandbox.dto.account.*;
+import imwhs.krit_server_sandbox.security.annotation.AuthenticatedKritAccountId;
 import imwhs.krit_server_sandbox.service.AccountService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -38,32 +39,35 @@ public class AccountController {
     @PutMapping("/{id}/password") // TODO: PATCH?
     public void updateAccountPassword(
             @PathVariable Long id,
-            @Valid @RequestBody AccountPasswordUpdateRequest request) { // TODO: 스프링 시큐리티 도입 후 권한 검증 추가
-        accountService.updatePassword(id, request.password());
+            @Valid @RequestBody AccountPasswordUpdateRequest request,
+            @AuthenticatedKritAccountId Long actorId) {
+        accountService.updatePassword(actorId, id, request.password());
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PutMapping("/{id}/name") // TODO: PATCH?
     public void updateAccountName(
             @PathVariable Long id,
-            @Valid @RequestBody AccountNameUpdateRequest request) { // TODO: 스프링 시큐리티 도입 후 권한 검증 추가
-        accountService.updateName(id, request.name());
+            @Valid @RequestBody AccountNameUpdateRequest request,
+            @AuthenticatedKritAccountId Long actorId) {
+        accountService.updateName(actorId, id, request.name());
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PutMapping("/{id}/imageUrl") // TODO: PATCH?
     public void updateAccountImageUrl(
             @PathVariable Long id,
-            @Valid @RequestBody AccountImageUrlUpdateRequest request) { // TODO: 스프링 시큐리티 도입 후 권한 검증 추가
-        accountService.updateImageUrl(id, request.imageUrl());
+            @Valid @RequestBody AccountImageUrlUpdateRequest request,
+            @AuthenticatedKritAccountId Long actorId) {
+        accountService.updateImageUrl(actorId, id, request.imageUrl());
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
     public void softDeleteAccount(
             @PathVariable Long id,
-            @RequestParam Long actorId) { // TODO: 스프링 시큐리티 도입 후 세션 인증 정보에서 가져오도록 변경
-        accountService.softDelete(id, actorId);
+            @AuthenticatedKritAccountId Long actorId) {
+        accountService.softDelete(actorId, id);
     }
 
 }

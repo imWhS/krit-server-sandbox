@@ -3,6 +3,7 @@ package imwhs.krit_server_sandbox.controller;
 import imwhs.krit_server_sandbox.dto.comment.CommentInfo;
 import imwhs.krit_server_sandbox.dto.comment.CommentRegisterRequest;
 import imwhs.krit_server_sandbox.dto.comment.CommentUpdateRequest;
+import imwhs.krit_server_sandbox.security.annotation.AuthenticatedKritAccountId;
 import imwhs.krit_server_sandbox.service.CommentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +19,10 @@ public class CommentController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public CommentInfo registerComment(@Valid @RequestBody CommentRegisterRequest request) {
-        return commentService.register(request.authorId(), request.postId(), request.body());
+    public CommentInfo registerComment(
+            @Valid @RequestBody CommentRegisterRequest request,
+            @AuthenticatedKritAccountId Long authorId) {
+        return commentService.register(authorId, request.postId(), request.body());
     }
 
     @GetMapping("/{id}")
@@ -31,15 +34,16 @@ public class CommentController {
     @PutMapping("/{id}")
     public void updateComment(
             @PathVariable Long id,
-            @Valid @RequestBody CommentUpdateRequest request) { // TODO: 스프링 시큐리티 도입 후 권한 검증 추가
-        commentService.updateBody(id, request.body());
+            @Valid @RequestBody CommentUpdateRequest request,
+            @AuthenticatedKritAccountId Long actorId) {
+        commentService.updateBody(actorId, id, request.body());
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
     public void softDeleteComment(
             @PathVariable Long id,
-            @RequestParam Long actorId) { // TODO: 스프링 시큐리티 도입 후 세션 인증 정보에서 가져오도록 변경
+            @AuthenticatedKritAccountId Long actorId) {
         commentService.softDelete(id, actorId);
     }
 

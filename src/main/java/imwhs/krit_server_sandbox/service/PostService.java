@@ -16,6 +16,7 @@ import imwhs.krit_server_sandbox.repository.PostRepository;
 import imwhs.krit_server_sandbox.repository.TagRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -186,16 +187,22 @@ public class PostService {
 
     /**
      * Post를 업데이트합니다.
+     * @param authorId 업데이트를 요청한 Account의 ID.
+     *                 업데이트하려는 Post의 author에 해당하는 Account의 ID와 동등해야 합니다.
      * @param id 업데이트할 Post의 ID
-     * @param version 업데이트할 Post의
+     * @param version 업데이트할 Post의 버전. 덮어쓰기를 방지하기 위해 사용합니다.
      * @param title Post의 새 제목
      * @param content Post의 새 본문
      * @param tagNames Post에 새로 달 Tag의 이름 목록.
      *                 게시물의 태그 목록(Post.tags)에서 tagNames에 포함되지 않은 이름에 해당하는 PostTag는 삭제됩니다.
      */
     @Transactional
-    public void update(Long id, Long version, String title, String content, Set<String> tagNames) {
+    public void update(Long authorId, Long id, Long version, String title, String content, Set<String> tagNames) {
         Post post = getWithAuthorTags(id);
+
+        if (!post.getAuthor().getId().equals(authorId)) {
+            throw new AccessDeniedException("게시물의 작성자가 아니어서, 게시물을 수정할 권한이 없어요.");
+        }
 
         if (!Objects.equals(post.getVersion(), version)) {
             throw new PostVersionConflictException();
@@ -233,23 +240,18 @@ public class PostService {
     }
 
     @Transactional
-    public void updateTitle(Long id, String title) {
-        Post post = get(id);
-        post.updateTitle(title);
-    }
-
-    @Transactional
-    public void updateContent(Long id, String content) {
-        Post post = get(id);
-        post.updateContent(content);
-    }
-
-    @Transactional
     public void softDelete(Long id, Long actorId) {
-        Account actor = accountRepository.findByIdAndDeletedAtIsNull(actorId)
-                .orElseThrow(() -> new AccountNotFoundException(actorId));
         Post post = get(id);
-        post.softDelete(actor.getId());
+
+        if (post.isSoftDeleted()) {
+            throw new IllegalArgumentException("이미 논리적 삭제 처리된 게시물이에요.");
+        }
+
+        if (!post.getAuthor().getId().equals(actorId)) {
+            throw new AccessDeniedException("게시물의 작성자가 아니어서, 게시물을 삭제할 권한이 없어요.");
+        }
+
+        post.softDelete(actorId);
     }
 
     private Post get(Long id) {

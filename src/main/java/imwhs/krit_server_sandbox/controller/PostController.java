@@ -5,6 +5,7 @@ import imwhs.krit_server_sandbox.dto.post.PostInfoCursorResponse;
 import imwhs.krit_server_sandbox.dto.post.PostRegisterRequest;
 import imwhs.krit_server_sandbox.dto.post.PostInfo;
 import imwhs.krit_server_sandbox.dto.post.PostUpdateRequest;
+import imwhs.krit_server_sandbox.security.annotation.AuthenticatedKritAccountId;
 import imwhs.krit_server_sandbox.service.PostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,8 +25,10 @@ public class PostController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public PostInfo registerPost(@Valid @RequestBody PostRegisterRequest request) {
-        return postService.register(request.authorId(), request.title(), request.content(), request.tagNames());
+    public PostInfo registerPost(
+            @Valid @RequestBody PostRegisterRequest request,
+            @AuthenticatedKritAccountId Long accountId) {
+        return postService.register(accountId, request.title(), request.content(), request.tagNames());
     }
 
     @GetMapping("/{id}")
@@ -58,15 +61,16 @@ public class PostController {
     @PutMapping("/{id}")
     public void updatePost(
             @PathVariable Long id,
-            @Valid @RequestBody PostUpdateRequest request) { // TODO: 스프링 시큐리티 도입 후 권한 검증 추가
-        postService.update(id, request.version(), request.title(), request.content(), request.tagNames());
+            @Valid @RequestBody PostUpdateRequest request,
+            @AuthenticatedKritAccountId Long actorId) {
+        postService.update(actorId, id, request.version(), request.title(), request.content(), request.tagNames());
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
     public void softDeletePost(
             @PathVariable Long id,
-            @RequestParam Long actorId) { // TODO: 스프링 시큐리티 도입 후 세션 인증 정보에서 가져오도록 변경
+            @AuthenticatedKritAccountId Long actorId) {
         postService.softDelete(id, actorId);
     }
 

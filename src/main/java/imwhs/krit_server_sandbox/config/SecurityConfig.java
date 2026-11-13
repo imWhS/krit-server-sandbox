@@ -1,6 +1,8 @@
 package imwhs.krit_server_sandbox.config;
 
 import imwhs.krit_server_sandbox.security.JwtTokenProvider;
+import imwhs.krit_server_sandbox.security.KritUserDetails;
+import imwhs.krit_server_sandbox.security.KritUserDetailsService;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,10 +15,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -80,8 +80,8 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http,
             JwtTokenProvider jwtTokenProvider,
-            UserDetailsService userDetailsService
-    ) throws Exception {
+            UserDetailsService userDetailsService,
+            KritUserDetailsService kritUserDetailsService) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
                 .formLogin(form -> form.disable())
@@ -117,11 +117,11 @@ public class SecurityConfig {
                                         "액세스 토큰에 유효한 이메일 주소가 없어서 인증을 더 이상 진행할 수 없어요.");
                             }
 
-                            UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+                            KritUserDetails userDetails = kritUserDetailsService.loadUserByUsername(email);
                             return new JwtAuthenticationToken(
                                     token,
-                                    userDetails.getAuthorities(),
-                                    userDetails.getUsername());
+                                    userDetails, // Security Context를 통해 스레드에서 사용자 정보에 접근할 수 있게 인증된 사용자를 principal로 설정합니다.
+                                    userDetails.getAuthorities());
                         })));
 
         return http.build();
