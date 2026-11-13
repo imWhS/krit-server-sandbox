@@ -3,6 +3,7 @@ package imwhs.krit_server_sandbox.controller;
 import imwhs.krit_server_sandbox.dto.comment.CommentInfo;
 import imwhs.krit_server_sandbox.dto.comment.CommentRegisterRequest;
 import imwhs.krit_server_sandbox.dto.comment.CommentUpdateRequest;
+import imwhs.krit_server_sandbox.security.annotation.AuthenticatedKritAccountId;
 import imwhs.krit_server_sandbox.service.CommentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +19,10 @@ public class CommentController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public CommentInfo registerComment(@Valid @RequestBody CommentRegisterRequest request) {
-        return commentService.register(request.authorId(), request.postId(), request.body());
+    public CommentInfo registerComment(
+            @Valid @RequestBody CommentRegisterRequest request,
+            @AuthenticatedKritAccountId Long authorId) {
+        return commentService.register(authorId, request.postId(), request.body());
     }
 
     @GetMapping("/{id}")
